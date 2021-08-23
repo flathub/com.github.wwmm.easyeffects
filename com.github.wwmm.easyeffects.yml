@@ -31,15 +31,15 @@ cleanup:
 add-extensions:
   org.freedesktop.LinuxAudio.Plugins:
     directory: extensions/Plugins
-    version: "20.08"
+    version: '20.08'
     add-ld-path: lib
     merge-dirs: lv2
     subdirectories: true
     no-autodownload: true
-    
+
   org.freedesktop.LinuxAudio.Plugins.LSP:
     directory: extensions/Plugins/LSP
-    version: "20.08"
+    version: '20.08'
     add-ld-path: lib
     merge-dirs: lv2
     autodelete: false
@@ -47,14 +47,13 @@ add-extensions:
 
   org.freedesktop.LinuxAudio.Plugins.ZamPlugins:
     directory: extensions/Plugins/ZamPlugins
-    version: "20.08"
+    version: '20.08'
     add-ld-path: lib
     merge-dirs: lv2
     autodelete: false
     subdirectories: true
 
 modules:
-  
   - name: easyeffects
     buildsystem: meson
     build-options:
@@ -62,26 +61,27 @@ modules:
         PYTHONPATH: /app/utils/lib/python3.8/site-packages:/app/lib/python3.8/site-packages:/usr/lib/python3.8/site-packages
     sources:
       - type: git
-        url: 'https://github.com/wwmm/easyeffects.git'
+        url: https://github.com/wwmm/easyeffects.git
         tag: v6.1.0
         commit: 7d084e299cd2999d3746903c43e59e282a26ddab
         x-checker-data:
           type: git
-          tag-pattern: "^v([\\d.]+)"
+          tag-pattern: ^v([\d.]+)
       - type: patch
         path: patch/easyeffects/001-fix-about-page-icon.patch
     post-install:
-      - install -Dm644 -t $FLATPAK_DEST/share/licenses/com.github.wwmm.easyeffects ../LICENSE.md
+      - install -Dm644 -t $FLATPAK_DEST/share/licenses/com.github.wwmm.easyeffects
+        ../LICENSE.md
       - mkdir -pm755 /app/extensions/Plugins
-      
+
     modules:
-      
       # Since easyeffects 6.0.0 need meson 0.57 or newer, and the gnome 40 runtime has an older one. 
       # When the gnome 41 runtime is released this can be removed, as well as PYTHONPATH from above.
       - name: meson
         buildsystem: simple
         build-commands:
-          - 'pip3 install --ignore-installed --exists-action=i --no-index --find-links="file://${PWD}" --prefix=/$FLATPAK_DEST "meson"'
+          - pip3 install --ignore-installed --exists-action=i --no-index --find-links="file://${PWD}"
+            --prefix=/$FLATPAK_DEST "meson"
         sources:
           - type: file
             url: https://files.pythonhosted.org/packages/4e/be/8139f127b4db2f79c8b117c80af56a3078cc4824b5b94250c7f81a70e03b/wheel-0.37.0.tar.gz
@@ -92,29 +92,29 @@ modules:
           - type: file
             url: https://files.pythonhosted.org/packages/63/2d/a030b1b53166776890883a521220433959e315c83ed975846b5484f43c7c/meson-0.59.0.tar.gz
             sha256: e376c298df64b643dfe01eccb2d7b6f1e02e95aa38c19f19d120d129612ce476
-      
+
       - name: glibmm
         buildsystem: meson
         config-opts:
-        - -Dbuild-documentation=false
+          - -Dbuild-documentation=false
         sources:
-        - type: git
-          url: 'https://gitlab.gnome.org/GNOME/glibmm.git'
-          tag: "2.68.1"
-          commit: 31b40adefc0d916246e60bd03a78b6ccae19f8a2
-          x-checker-data:
-            type: git
-            tag-pattern: "^([\\d.]+)"
-          cleanup:
-          - '/lib/glibmm*'
-          - '/lib/giomm*'
+          - type: git
+            url: https://gitlab.gnome.org/GNOME/glibmm.git
+            tag: 2.68.1
+            commit: 31b40adefc0d916246e60bd03a78b6ccae19f8a2
+            x-checker-data:
+              type: git
+              tag-pattern: ^([\d.]+)
+            cleanup:
+              - /lib/glibmm*
+              - /lib/giomm*
         modules:
 
           - name: mm-common
             buildsystem: meson
             sources:
               - type: archive
-                url: 'https://download.gnome.org/sources/mm-common/1.0/mm-common-1.0.3.tar.xz'
+                url: https://download.gnome.org/sources/mm-common/1.0/mm-common-1.0.3.tar.xz
                 sha256: e81596625899aacf1d0bf27ccc2fcc7f373405ec48735ca1c7273c0fbcdc1ef5
                 # gnome download source missing json file that f-e-d-c needs
                 # git source results in "Error: libstdc++.tag does not exist."
@@ -127,32 +127,31 @@ modules:
               - -Dbuild-examples=false
             sources:
               - type: archive
-                url: 'https://download.gnome.org/sources/libsigc++/3.0/libsigc++-3.0.7.tar.xz' # git release doesn't provide dot dependency
+                url: https://download.gnome.org/sources/libsigc++/3.0/libsigc++-3.0.7.tar.xz   # git release doesn't provide dot dependency
                 sha256: bfbe91c0d094ea6bbc6cbd3909b7d98c6561eea8b6d9c0c25add906a6e83d733
                 x-checker-data:
                   type: gnome
                   name: libsigc++
                   stable-only: true
-                  
+
             cleanup:
-              - '/lib/sigc++*'
-      
+              - /lib/sigc++*
       - name: gtkmm
         buildsystem: meson
         config-opts:
-        - -Dbuild-documentation=false
+          - -Dbuild-documentation=false
         sources:
-        - type: git
-          url: 'https://gitlab.gnome.org/GNOME/gtkmm.git'
-          tag: 4.2.0
-          commit: e0e280baf48b9899b1870a3308ea8fb31c83ebb5
-          x-checker-data:
-            type: git
-            tag-pattern: "^([\\d.]+)"
+          - type: git
+            url: https://gitlab.gnome.org/GNOME/gtkmm.git
+            tag: 4.2.0
+            commit: e0e280baf48b9899b1870a3308ea8fb31c83ebb5
+            x-checker-data:
+              type: git
+              tag-pattern: ^([\d.]+)
 
-          cleanup:
-          - '/lib/gdkmm*'
-          - '/lib/gtkmm*'
+            cleanup:
+              - /lib/gdkmm*
+              - /lib/gtkmm*
         modules:
 
           - name: atkmm
@@ -161,14 +160,14 @@ modules:
               - -Dbuild-documentation=false
             sources:
               - type: archive
-                url: 'https://download.gnome.org/sources/atkmm/2.36/atkmm-2.36.1.tar.xz'
+                url: https://download.gnome.org/sources/atkmm/2.36/atkmm-2.36.1.tar.xz
                 sha256: e11324bfed1b6e330a02db25cecc145dca03fb0dff47f0710c85e317687da458
                 x-checker-data:
                   type: gnome
                   name: atkmm
                   stable-only: true
             cleanup:
-              - '/lib/atkmm*'
+              - /lib/atkmm*
 
           - name: cairomm
             build-options:
@@ -179,17 +178,16 @@ modules:
             sources:
               # cairomm >= 1.14.0 requires sigc++ 3.0 and other modules require cairomm < 1.13.0
               - type: git
-                url: 'https://gitlab.freedesktop.org/cairo/cairomm.git'
+                url: https://gitlab.freedesktop.org/cairo/cairomm.git
                 tag: 1.16.1
                 commit: 61286896d11ed961add217ff4a209d10d9efb700
                 x-checker-data:
                   type: git
-                  tag-pattern: "^([\\d.]+)"
-                
+                  tag-pattern: ^([\d.]+)
             post-install:
               - install -Dm644 -t /app/share/licenses/cairomm COPYING
             cleanup:
-              - '/lib/cairomm*'
+              - /lib/cairomm*
 
           - name: pangomm
             buildsystem: meson
@@ -197,14 +195,14 @@ modules:
               - -Dbuild-documentation=false
             sources:
               - type: git
-                url: 'https://gitlab.gnome.org/GNOME/pangomm.git'
+                url: https://gitlab.gnome.org/GNOME/pangomm.git
                 tag: 2.49.1
                 commit: 73a834196de6e3b016a16fab299865c0caffad26
                 x-checker-data:
                   type: git
-                  tag-pattern: "^([\\d.]+)"
+                  tag-pattern: ^([\d.]+)
             cleanup:
-              - '/lib/pangomm*'
+              - /lib/pangomm*
 
       - name: libebur128
         buildsystem: cmake-ninja
@@ -214,12 +212,12 @@ modules:
           - -DCMAKE_INSTALL_LIBDIR=lib
         sources:
           - type: git
-            url: 'https://github.com/jiixyj/libebur128.git'
+            url: https://github.com/jiixyj/libebur128.git
             tag: v1.2.6
             commit: 67b33abe1558160ed76ada1322329b0e9e058b02
             x-checker-data:
               type: git
-              tag-pattern: "^v([\\d.]+)"
+              tag-pattern: ^v([\d.]+)
         post-install:
           - install -Dm644 -t $FLATPAK_DEST/share/licenses/libebur128 COPYING
 
@@ -227,25 +225,25 @@ modules:
         no-autogen: true
         subdir: source
         make-install-args:
-          - "PREFIX=${FLATPAK_DEST}"
-          - "LIBDIR=${FLATPAK_DEST}/lib"
+          - PREFIX=${FLATPAK_DEST}
+          - LIBDIR=${FLATPAK_DEST}/lib
         sources:
           - type: archive
-            url: 'https://kokkinizita.linuxaudio.org/linuxaudio/downloads/zita-convolver-4.0.3.tar.bz2'
+            url: https://kokkinizita.linuxaudio.org/linuxaudio/downloads/zita-convolver-4.0.3.tar.bz2
             sha512: 62d7841757f10c094e43ed755e187f947c5743f302ed2a1ee6064a850c18921466f4505d8a2a7b3ad23619db7f1ad7307e1dfb2e8a1e7685e60ece2ffff4f6ca
           - type: patch
             path: patch/zita-convolver/0001-Fix-makefile.patch
             # still necessary as of 2021-08-04
         modules:
-          - "shared-modules/linux-audio/fftw3f.json"
-          - "shared-modules/linux-audio/lv2.json"
-          - "shared-modules/linux-audio/lilv.json" # Required by libgstlv2.so
+          - shared-modules/linux-audio/fftw3f.json
+          - shared-modules/linux-audio/lv2.json
+          - shared-modules/linux-audio/lilv.json   # Required by libgstlv2.so
 
           - name: bs2b
             rm-configure: true
             sources:
               - type: archive
-                url: 'https://downloads.sourceforge.net/sourceforge/bs2b/libbs2b-3.1.0.tar.gz' # was last updated in 2009 so x-checker-data probably not too helpful
+                url: https://downloads.sourceforge.net/sourceforge/bs2b/libbs2b-3.1.0.tar.gz   # was last updated in 2009 so x-checker-data probably not too helpful
                 sha256: 6aaafd81aae3898ee40148dd1349aab348db9bfae9767d0e66e0b07ddd4b2528
               - type: script
                 dest-filename: autogen.sh
@@ -264,19 +262,17 @@ modules:
             buildsystem: autotools
             sources:
               - type: git
-                url: 'https://gitlab.xiph.org/xiph/speexdsp'
-                tag: 'SpeexDSP-1.2.0'
+                url: https://gitlab.xiph.org/xiph/speexdsp
+                tag: SpeexDSP-1.2.0
                 commit: 64cbfa9bca7479a758351aa02bb4abdd76baa9e7
                 x-checker-data:
                   type: git
-                  tag-pattern: "^SpeexDSP-([\\d.]+)"
+                  tag-pattern: ^SpeexDSP-([\d.]+)
                 # Note to future Flatpakers: webrtc-audio-processing has a module in the pulseeffects manifest that could replace speexdsp.
                 # Why it was removed: https://github.com/flathub/com.github.wwmm.pulseeffects/issues/44#issuecomment-885999963
                 # Original module: https://github.com/flathub/com.github.wwmm.pulseeffects/blob/81e34d9bf6ee08610ac8bf79454412c3eaaa83ce/com.github.wwmm.pulseeffects.yml#L225
                 # You might also need the patch from that repo: https://github.com/flathub/com.github.wwmm.pulseeffects/blob/81e34d9bf6ee08610ac8bf79454412c3eaaa83ce/patch/webrtc-audio-processing/0001-build-Use-cmake-to-look-up-abseil-dependency.patch
-          
           # LV2 Plugins
-          
           # manifest module from: https://github.com/flathub/io.mpv.Mpv/blob/73681476e1abde88770804c497f03c4bfea027f6/io.mpv.Mpv.yml#L223
           - name: rubberband
             buildsystem: meson
@@ -297,13 +293,12 @@ modules:
           - name: calf
             sources:
               - type: git
-                url: 'https://github.com/calf-studio-gear/calf.git'
-                tag: "0.90.3"
+                url: https://github.com/calf-studio-gear/calf.git
+                tag: 0.90.3
                 commit: 41a2b7fb029cf0099fc05b7a9c569208034018de
                 x-checker-data:
                   type: git
-                  tag-pattern: "^([\\d.]+)" 
-                  
+                  tag-pattern: ^([\d.]+)
             post-install:
               - install -Dm644 -t $FLATPAK_DEST/share/licenses/calf COPYING
             cleanup:
@@ -315,12 +310,12 @@ modules:
               - /share/icons
               - /share/man
             modules:
-              - "shared-modules/linux-audio/fluidsynth2.json"
+              - shared-modules/linux-audio/fluidsynth2.json
 
       - name: rnnoise
         sources:
           - type: git
-            url: 'https://github.com/xiph/rnnoise.git'
+            url: https://github.com/xiph/rnnoise.git
             commit: 1cbdbcf1283499bbb2230a6b0f126eb9b236defd
           #  x-checker-data: might not work properly since no tags upstream: https://github.com/xiph/rnnoise/issues/137
 
@@ -339,12 +334,11 @@ modules:
         sources:
           - type: git
             url: https://gitlab.freedesktop.org/pipewire/pipewire.git
-            tag: "0.3.31"
-            commit: c43dabcc96e2e072cdf08e5f094bb677d9017c6b
+            tag: 0.3.33
+            commit: 8119e5cdb4efc3325f5629cd1afe9957aa5c39dc
             x-checker-data:
               type: git
-              tag-pattern: "^([\\d.]+)"
-            
+              tag-pattern: ^([\d.]+)
       - name: nlohmann-json
         buildsystem: cmake-ninja
         config-opts:
