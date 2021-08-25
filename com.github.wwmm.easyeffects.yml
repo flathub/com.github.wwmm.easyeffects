@@ -54,7 +54,6 @@ add-extensions:
     subdirectories: true
 
 modules:
-  
   - name: easyeffects
     buildsystem: meson
     build-options:
@@ -360,6 +359,8 @@ modules:
               
       - name: libportal
         buildsystem: meson
+        config-opts:
+        - -Dportal-tests=gtk4
         sources:
           - type: git
             url: https://github.com/flatpak/libportal.git
