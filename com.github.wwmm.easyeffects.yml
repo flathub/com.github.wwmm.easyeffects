@@ -62,9 +62,9 @@ modules:
         PYTHONPATH: /app/utils/lib/python3.8/site-packages:/app/lib/python3.8/site-packages:/usr/lib/python3.8/site-packages
     sources:
       - type: git
-        url: 'https://github.com/wwmm/easyeffects.git'
-        tag: v6.1.0
-        commit: 7d084e299cd2999d3746903c43e59e282a26ddab
+        url: 'https://github.com/vchernin/easyeffects.git'
+        #tag: v6.1.0
+        commit: b31f8fe0eba6820ace4404282658a960281e55e0
         x-checker-data:
           type: git
           tag-pattern: "^v([\\d.]+)"
@@ -357,3 +357,11 @@ modules:
               type: anitya
               project-id: 141453
               url-template: https://github.com/nlohmann/json/archive/v$version.tar.gz
+              
+      - name: libportal
+        buildsystem: meson
+        sources:
+          - type: git
+            url: https://github.com/flatpak/libportal.git
+            tag: "0.4"
+            commit: f68764e288ede516d902b131cc4fadded3804059
