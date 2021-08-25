@@ -341,9 +341,6 @@ modules:
             url: https://gitlab.freedesktop.org/pipewire/pipewire.git
             tag: "0.3.31"
             commit: c43dabcc96e2e072cdf08e5f094bb677d9017c6b
-            x-checker-data:
-              type: git
-              tag-pattern: "^([\\d.]+)"
             
       - name: nlohmann-json
         buildsystem: cmake-ninja
