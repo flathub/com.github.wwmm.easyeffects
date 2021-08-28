@@ -6,7 +6,7 @@ id: com.github.wwmm.easyeffects
 runtime: org.gnome.Platform
 runtime-version: '40'
 sdk: org.gnome.Sdk
-command: easyeffects
+command: easyeffects-wrapper
 rename-icon: easyeffects
 finish-args:
   - --share=ipc
@@ -67,13 +67,18 @@ modules:
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)
+      - type: file
+        path: easyeffects-wrapper.sh
       - type: patch
         path: patch/easyeffects/001-fix-about-page-icon.patch
+      - type: patch
+        path: patch/easyeffects/002-fix-desktop-file.patch
+      - type: shell
+        commands:
+          - install -Dvm 755 easyeffects-wrapper.sh $FLATPAK_DEST/bin/easyeffects-wrapper
     post-install:
-      - install -Dm644 -t $FLATPAK_DEST/share/licenses/com.github.wwmm.easyeffects
-        ../LICENSE.md
-      - mkdir -pm755 /app/extensions/Plugins
-
+      - install -Dm644 -t $FLATPAK_DEST/share/licenses/$FLATPAK_ID ../LICENSE.md
+      - mkdir -pm755 $FLATPAK_DEST/extensions/Plugins
     modules:
       # Since easyeffects 6.0.0 need meson 0.57 or newer, and the gnome 40 runtime has an older one. 
       # When the gnome 41 runtime is released this can be removed, as well as PYTHONPATH from above.
@@ -323,6 +328,7 @@ modules:
           - /share/doc/rnnoise
 
       # Easyeffects 6.0.0 depends on pipewire >=0.3.31, gnome 40 runtime has 0.3.25
+      # Ensure to update easyeffects-wrapper.sh when updating pipewire version.
       - name: pipewire
         buildsystem: meson
         config-opts:
