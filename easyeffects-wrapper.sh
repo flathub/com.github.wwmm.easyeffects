@@ -25,16 +25,17 @@ else
       # https://stackoverflow.com/a/428118
       echo "pw-dump succeeded; system likely has PipeWire 0.3.x or later."
       echo "You have PipeWire ${found_pipewire_version} installed"
-      echo "This is less than PipeWire ${required_pipewire_version} required to run EasyEffects"
+      echo "This is less than PipeWire ${required_pipewire_version} recommended to run EasyEffects"
 
       # put all the text here so we can use variable as part of output, it is helpful to the user.
       zenity --info --title="PipeWire version warning" --no-wrap \
         --text="Could not find compatible PipeWire.
-Install PipeWire ${required_pipewire_version} or newer for EasyEffects to work correctly. \n
+It is recommended to install PipeWire ${required_pipewire_version} or newer for EasyEffects to work correctly. \n
 More info:
-PipeWire ${found_pipewire_version} was found, which is not recent enough for EasyEffects. 
-If on Ubuntu or an Ubuntu-based system you may try https://pipewire-debian.github.io
-You may try PulseEffects which does not require PipeWire. \n
+PipeWire ${found_pipewire_version} was found, which is not considered recent enough for EasyEffects. 
+If on Ubuntu or an Ubuntu-based system you may install newer PipeWire from: https://pipewire-debian.github.io
+You may try PulseEffects which does not require PipeWire.
+You may dismiss this warning by clicking \"OK\", please note PipeWire ${found_pipewire_version} is not tested to work with EasyEffects. \n
 If you believe this message was shown in error, please report it to: https://github.com/wwmm/easyeffects"
       
   else # CATCH
@@ -48,7 +49,7 @@ If you believe this message was shown in error, please report it to: https://git
 Install PipeWire ${required_pipewire_version} or newer for EasyEffects to work correctly. \n
 More info:
 Either PipeWire is not installed or is not recent enough for EasyEffects. 
-If on Ubuntu or an Ubuntu-based system you may try https://pipewire-debian.github.io
+If on Ubuntu or an Ubuntu-based system you may install newer PipeWire from: https://pipewire-debian.github.io
 You may try PulseEffects which does not require PipeWire. \n
 If you believe this message was shown in error, please report it to: https://github.com/wwmm/easyeffects"
       
