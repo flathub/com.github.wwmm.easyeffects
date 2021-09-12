@@ -1,0 +1,319 @@
+From 1b474382d308d842968ea640a6b82ce22c70b672 Mon Sep 17 00:00:00 2001
+From: Digitalone <kurmikon@libero.it>
+Date: Fri, 10 Sep 2021 13:09:16 +0200
+Subject: [PATCH 1/2] integrate libportal
+
+---
+ include/general_settings_ui.hpp | 1 +
+ src/meson.build                 | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/include/general_settings_ui.hpp b/include/general_settings_ui.hpp
+index 70b4d1ae..04719c49 100644
+--- a/include/general_settings_ui.hpp
++++ b/include/general_settings_ui.hpp
+@@ -26,6 +26,7 @@
+ #include <gtkmm.h>
+ #include <filesystem>
+ #include "application.hpp"
++#include "libportal/background.h"
+ #include "util.hpp"
+ 
+ class GeneralSettingsUi : public Gtk::Box {
+diff --git a/src/meson.build b/src/meson.build
+index cd66d6de..0af79e78 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -118,6 +118,7 @@ easyeffects_deps = [
+ 	dependency('sndfile'),
+ 	dependency('fftw3f'),
+ 	dependency('libebur128',version: '>=1.2.0'),
++	dependency('libportal'),
+ 	dependency('rnnoise'),
+ 	dependency('samplerate'),
+ 	dependency('rubberband'),
+
+From aef5f561ba1c56599ec783afa5b628e0495edd48 Mon Sep 17 00:00:00 2001
+From: Digitalone <kurmikon@libero.it>
+Date: Fri, 10 Sep 2021 16:58:47 +0200
+Subject: [PATCH 2/2] attempt to integrate autostart from libportal
+
+---
+ include/application.hpp         |  3 ++
+ include/application_ui.hpp      |  7 ++--
+ include/general_settings_ui.hpp | 16 ++++++---
+ src/application.cpp             |  4 ++-
+ src/application_ui.cpp          |  9 ++---
+ src/general_settings_ui.cpp     | 63 ++++++++++++++++++++++++++++-----
+ 6 files changed, 83 insertions(+), 19 deletions(-)
+
+diff --git a/include/application.hpp b/include/application.hpp
+index dea8d081..3359e952 100644
+--- a/include/application.hpp
++++ b/include/application.hpp
+@@ -25,6 +25,7 @@
+ #include <gtkmm.h>
+ #include <memory>
+ #include "config.h"
++#include "libportal/background.h"
+ #include "pipe_manager.hpp"
+ #include "presets_manager.hpp"
+ #include "stream_input_effects.hpp"
+@@ -62,6 +63,8 @@ class Application : public Gtk::Application {
+ 
+   bool running_as_service = false;
+ 
++  XdpPortal* portal = nullptr;
++
+   void create_actions();
+   void update_bypass_state(const Glib::ustring& key);
+ };
+diff --git a/include/application_ui.hpp b/include/application_ui.hpp
+index 9353aede..26d0b8c0 100644
+--- a/include/application_ui.hpp
++++ b/include/application_ui.hpp
+@@ -33,14 +33,17 @@
+ 
+ class ApplicationUi : public Gtk::ApplicationWindow {
+  public:
+-  ApplicationUi(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder, Application* application);
++  ApplicationUi(BaseObjectType* cobject,
++                const Glib::RefPtr<Gtk::Builder>& builder,
++                Application* application,
++                XdpPortal* portal);
+   ApplicationUi(const ApplicationUi&) = delete;
+   auto operator=(const ApplicationUi&) -> ApplicationUi& = delete;
+   ApplicationUi(const ApplicationUi&&) = delete;
+   auto operator=(const ApplicationUi&&) -> ApplicationUi& = delete;
+   ~ApplicationUi() override;
+ 
+-  static auto create(Application* app) -> ApplicationUi*;
++  static auto create(Application* app, XdpPortal* portal) -> ApplicationUi*;
+ 
+  private:
+   const std::string log_tag = "application_ui: ";
+diff --git a/include/general_settings_ui.hpp b/include/general_settings_ui.hpp
+index 04719c49..38146f62 100644
+--- a/include/general_settings_ui.hpp
++++ b/include/general_settings_ui.hpp
+@@ -26,19 +26,23 @@
+ #include <gtkmm.h>
+ #include <filesystem>
+ #include "application.hpp"
+-#include "libportal/background.h"
+ #include "util.hpp"
+ 
+ class GeneralSettingsUi : public Gtk::Box {
+  public:
+-  GeneralSettingsUi(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder, Application* application);
++  GeneralSettingsUi(BaseObjectType* cobject,
++                    const Glib::RefPtr<Gtk::Builder>& builder,
++                    Application* application,
++                    XdpPortal* portal_ptr);
+   GeneralSettingsUi(const GeneralSettingsUi&) = delete;
+   auto operator=(const GeneralSettingsUi&) -> GeneralSettingsUi& = delete;
+   GeneralSettingsUi(const GeneralSettingsUi&&) = delete;
+   auto operator=(const GeneralSettingsUi&&) -> GeneralSettingsUi& = delete;
+   ~GeneralSettingsUi() override;
+ 
+-  static void add_to_stack(Gtk::Stack* stack, Application* app);
++  static void add_to_stack(Gtk::Stack* stack, Application* app, XdpPortal* portal_ptr);
++
++  static void on_request_background_called(GObject* source, GAsyncResult* result, gpointer data);
+ 
+  private:
+   const std::string log_tag = "general_settings_ui: ";
+@@ -47,6 +51,8 @@ class GeneralSettingsUi : public Gtk::Box {
+ 
+   Application* app = nullptr;
+ 
++  XdpPortal* portal = nullptr;
++
+   Gtk::Switch *enable_autostart = nullptr, *process_all_inputs = nullptr, *process_all_outputs = nullptr,
+               *theme_switch = nullptr, *shutdown_on_window_close = nullptr;
+ 
+@@ -56,7 +62,9 @@ class GeneralSettingsUi : public Gtk::Box {
+ 
+   void init_autostart_switch();
+ 
+-  auto on_enable_autostart(bool state) -> bool;
++  auto on_enable_autostart(const bool& state) -> bool;
++
++  void update_background_portal(const bool& state);
+ 
+   void on_reset_settings();
+ };
+diff --git a/src/application.cpp b/src/application.cpp
+index e9464162..9e6de03a 100644
+--- a/src/application.cpp
++++ b/src/application.cpp
+@@ -104,6 +104,8 @@ void Application::on_startup() {
+ 
+   util::debug(log_tag + "easyeffects version: " + std::string(VERSION));
+ 
++  portal = xdp_portal_new();
++
+   settings = Gio::Settings::create("com.github.wwmm.easyeffects");
+   soe_settings = Gio::Settings::create("com.github.wwmm.easyeffects.streamoutputs");
+   sie_settings = Gio::Settings::create("com.github.wwmm.easyeffects.streaminputs");
+@@ -273,7 +275,7 @@ void Application::on_activate() {
+       widgets.
+     */
+ 
+-    auto* const window = ApplicationUi::create(this);
++    auto* const window = ApplicationUi::create(this, portal);
+ 
+     add_window(*window);
+ 
+diff --git a/src/application_ui.cpp b/src/application_ui.cpp
+index bae0faf2..cea6f3dc 100644
+--- a/src/application_ui.cpp
++++ b/src/application_ui.cpp
+@@ -21,7 +21,8 @@
+ 
+ ApplicationUi::ApplicationUi(BaseObjectType* cobject,
+                              const Glib::RefPtr<Gtk::Builder>& builder,
+-                             Application* application)
++                             Application* application,
++                             XdpPortal* portal)
+     : Gtk::ApplicationWindow(cobject), app(application), settings(app->settings) {
+   apply_css_style("custom.css");
+ 
+@@ -36,7 +37,7 @@ ApplicationUi::ApplicationUi(BaseObjectType* cobject,
+   toggle_pipe_info = builder->get_widget<Gtk::ToggleButton>("toggle_pipe_info");
+ 
+   presets_menu_ui = PresetsMenuUi::create(app);
+-  GeneralSettingsUi::add_to_stack(stack_menu_settings, app);
++  GeneralSettingsUi::add_to_stack(stack_menu_settings, app, portal);
+   SpectrumSettingsUi::add_to_stack(stack_menu_settings, app);
+ 
+   auto icon_theme = setup_icon_theme();
+@@ -92,10 +93,10 @@ ApplicationUi::~ApplicationUi() {
+   util::debug(log_tag + "destroyed");
+ }
+ 
+-auto ApplicationUi::create(Application* app_this) -> ApplicationUi* {
++auto ApplicationUi::create(Application* app_this, XdpPortal* portal) -> ApplicationUi* {
+   const auto& builder = Gtk::Builder::create_from_resource("/com/github/wwmm/easyeffects/ui/application_window.ui");
+ 
+-  return Gtk::Builder::get_widget_derived<ApplicationUi>(builder, "ApplicationUi", app_this);
++  return Gtk::Builder::get_widget_derived<ApplicationUi>(builder, "ApplicationUi", app_this, portal);
+ }
+ 
+ void ApplicationUi::apply_css_style(const std::string& css_file_name) {
+diff --git a/src/general_settings_ui.cpp b/src/general_settings_ui.cpp
+index a9c5510f..4c050585 100644
+--- a/src/general_settings_ui.cpp
++++ b/src/general_settings_ui.cpp
+@@ -21,8 +21,12 @@
+ 
+ GeneralSettingsUi::GeneralSettingsUi(BaseObjectType* cobject,
+                                      const Glib::RefPtr<Gtk::Builder>& builder,
+-                                     Application* application)
+-    : Gtk::Box(cobject), settings(Gio::Settings::create("com.github.wwmm.easyeffects")), app(application) {
++                                     Application* application,
++                                     XdpPortal* portal_ptr)
++    : Gtk::Box(cobject),
++      settings(Gio::Settings::create("com.github.wwmm.easyeffects")),
++      app(application),
++      portal(portal_ptr) {
+   // loading builder widgets
+ 
+   theme_switch = builder->get_widget<Gtk::Switch>("theme_switch");
+@@ -34,6 +38,8 @@ GeneralSettingsUi::GeneralSettingsUi(BaseObjectType* cobject,
+   reset_settings = builder->get_widget<Gtk::Button>("reset_settings");
+   about_button = builder->get_widget<Gtk::Button>("about_button");
+ 
++  init_autostart_switch();
++
+   // signals connection
+ 
+   enable_autostart->signal_state_set().connect(sigc::mem_fun(*this, &GeneralSettingsUi::on_enable_autostart), false);
+@@ -46,8 +52,6 @@ GeneralSettingsUi::GeneralSettingsUi(BaseObjectType* cobject,
+   settings->bind("process-all-inputs", process_all_inputs, "active");
+   settings->bind("process-all-outputs", process_all_outputs, "active");
+   settings->bind("shutdown-on-window-close", shutdown_on_window_close, "active");
+-
+-  init_autostart_switch();
+ }
+ 
+ GeneralSettingsUi::~GeneralSettingsUi() {
+@@ -58,10 +62,10 @@ GeneralSettingsUi::~GeneralSettingsUi() {
+   util::debug(log_tag + "destroyed");
+ }
+ 
+-void GeneralSettingsUi::add_to_stack(Gtk::Stack* stack, Application* app) {
++void GeneralSettingsUi::add_to_stack(Gtk::Stack* stack, Application* app, XdpPortal* portal_ptr) {
+   const auto& builder = Gtk::Builder::create_from_resource("/com/github/wwmm/easyeffects/ui/general_settings.ui");
+ 
+-  auto* const ui = Gtk::Builder::get_widget_derived<GeneralSettingsUi>(builder, "top_box", app);
++  auto* const ui = Gtk::Builder::get_widget_derived<GeneralSettingsUi>(builder, "top_box", app, portal_ptr);
+ 
+   stack->add(*ui, "general_spectrum", _("General"));
+ }
+@@ -69,10 +73,14 @@ void GeneralSettingsUi::add_to_stack(Gtk::Stack* stack, Application* app) {
+ void GeneralSettingsUi::init_autostart_switch() {
+   const auto& path = Glib::get_user_config_dir() + "/autostart/easyeffects-service.desktop";
+ 
+-  enable_autostart->set_active(std::filesystem::is_regular_file(path) ? true : false);
++  const auto autostart_active = std::filesystem::is_regular_file(path) ? true : false;
++
++  enable_autostart->set_active(autostart_active);
++
++  update_background_portal(autostart_active);
+ }
+ 
+-auto GeneralSettingsUi::on_enable_autostart(bool state) -> bool {
++auto GeneralSettingsUi::on_enable_autostart(const bool& state) -> bool {
+   std::filesystem::path autostart_dir{Glib::get_user_config_dir() + "/autostart"};
+ 
+   if (!std::filesystem::is_directory(autostart_dir)) {
+@@ -106,9 +114,48 @@ auto GeneralSettingsUi::on_enable_autostart(bool state) -> bool {
+     }
+   }
+ 
++  update_background_portal(state);
++
+   return false;
+ }
+ 
++void GeneralSettingsUi::update_background_portal(const bool& state) {
++  XdpBackgroundFlags background_flags = XDP_BACKGROUND_FLAG_NONE;
++
++  g_autoptr(GPtrArray) command_line = nullptr;
++
++  if (state) {
++    command_line = g_ptr_array_new_with_free_func(g_free);
++
++    g_ptr_array_add(command_line, g_strdup("easyeffects"));
++    g_ptr_array_add(command_line, g_strdup("--gapplication-service"));
++
++    background_flags = XDP_BACKGROUND_FLAG_AUTOSTART;
++  }
++
++  auto* reason = g_strdup("EasyEffects Autostart");
++
++  xdp_portal_request_background(portal, nullptr, reason, command_line, background_flags, NULL,
++                                on_request_background_called, this);
++
++  g_free(reason);
++}
++
++void GeneralSettingsUi::on_request_background_called(GObject* source, GAsyncResult* result, gpointer data) {
++  GeneralSettingsUi* gs_ui_ptr = static_cast<GeneralSettingsUi*>(data);
++
++  g_autoptr(GError) error = nullptr;
++
++  if (!xdp_portal_request_background_finish(gs_ui_ptr->portal, result, &error)) {
++    util::warning(gs_ui_ptr->log_tag +
++                  "portal background request failed:" + ((error) ? error->message : "Unknown error"));
++
++    return;
++  }
++
++  util::debug(gs_ui_ptr->log_tag + "portal background request successfully completed");
++}
++
+ void GeneralSettingsUi::on_reset_settings() {
+   settings->reset("");
+ }

@@ -61,9 +61,9 @@ modules:
         PYTHONPATH: /app/utils/lib/python3.8/site-packages:/app/lib/python3.8/site-packages:/usr/lib/python3.8/site-packages
     sources:
       - type: git
-        url: 'https://github.com/Digitalone1/easyeffects'
-        #tag: v6.1.0
-        commit: aef5f561ba1c56599ec783afa5b628e0495edd48
+        url: 'https://github.com/wwmm/easyeffects'
+        tag: v6.1.0
+        commit: 7d084e299cd2999d3746903c43e59e282a26ddab
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)
@@ -73,6 +73,8 @@ modules:
         path: patch/easyeffects/001-fix-about-page-icon.patch
       - type: patch
         path: patch/easyeffects/002-fix-desktop-file.patch
+      - type: patch
+        path: patch/easyeffects/003-integrate-libportal.patch
       - type: shell
         commands:
           - install -Dvm 755 easyeffects-wrapper.sh $FLATPAK_DEST/bin/easyeffects-wrapper
