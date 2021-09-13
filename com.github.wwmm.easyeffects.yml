@@ -74,7 +74,7 @@ modules:
       - type: patch
         path: patch/easyeffects/002-fix-desktop-file.patch
       - type: patch
-        path: patch/easyeffects/003-integrate-libportal.patch
+        path: patch/easyeffects/004-integrate-libportal-2.patch
       - type: shell
         commands:
           - install -Dvm 755 easyeffects-wrapper.sh $FLATPAK_DEST/bin/easyeffects-wrapper
