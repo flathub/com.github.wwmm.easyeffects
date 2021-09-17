@@ -62,8 +62,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
-        tag: v6.1.0
-        commit: 7d084e299cd2999d3746903c43e59e282a26ddab
+        tag: v6.1.1
+        commit: e293cf5cc3c8e4b52c6ce20397d7c0855246cb27
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)
@@ -73,6 +73,8 @@ modules:
         path: patch/easyeffects/001-fix-about-page-icon.patch
       - type: patch
         path: patch/easyeffects/002-fix-desktop-file.patch
+      - type: patch
+        path: patch/easyeffects/003-libportal-autostart.patch
       - type: shell
         commands:
           - install -Dvm 755 easyeffects-wrapper.sh $FLATPAK_DEST/bin/easyeffects-wrapper
@@ -355,3 +357,11 @@ modules:
               type: anitya
               project-id: 141453
               url-template: https://github.com/nlohmann/json/archive/v$version.tar.gz
+              
+      - name: libportal
+        buildsystem: meson
+        sources:
+          - type: git
+            url: https://github.com/flatpak/libportal.git
+            tag: "0.4"
+            commit: f68764e288ede516d902b131cc4fadded3804059 
