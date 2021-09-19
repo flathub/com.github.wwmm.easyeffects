@@ -61,9 +61,9 @@ modules:
         PYTHONPATH: /app/utils/lib/python3.8/site-packages:/app/lib/python3.8/site-packages:/usr/lib/python3.8/site-packages
     sources:
       - type: git
-        url: https://github.com/wwmm/easyeffects.git
-        tag: v6.1.1
-        commit: e293cf5cc3c8e4b52c6ce20397d7c0855246cb27
+        url: https://github.com/Digitalone1/easyeffects.git
+        #tag: v6.1.1
+        commit: 4b3cffc2aefabffce3a0424770248feeb15739c6
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)
