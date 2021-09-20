@@ -62,8 +62,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
-        tag: v6.1.1
-        commit: e293cf5cc3c8e4b52c6ce20397d7c0855246cb27
+        tag: v6.1.2
+        commit: 89063a4b1facca2dd8db80d8c1a21c8b727884c0
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)
@@ -150,8 +150,8 @@ modules:
         sources:
           - type: git
             url: https://gitlab.gnome.org/GNOME/gtkmm.git
-            tag: 4.2.0
-            commit: e0e280baf48b9899b1870a3308ea8fb31c83ebb5
+            tag: 4.4.0
+            commit: 44bb79e8ee6e86bdc2e6275b8b9c3bded7ec0b3a
             x-checker-data:
               type: git
               tag-pattern: ^([\d.]+)
@@ -357,11 +357,11 @@ modules:
               type: anitya
               project-id: 141453
               url-template: https://github.com/nlohmann/json/archive/v$version.tar.gz
-              
+
       - name: libportal
         buildsystem: meson
         sources:
           - type: git
             url: https://github.com/flatpak/libportal.git
-            tag: "0.4"
-            commit: f68764e288ede516d902b131cc4fadded3804059 
+            tag: '0.4'
+            commit: f68764e288ede516d902b131cc4fadded3804059
