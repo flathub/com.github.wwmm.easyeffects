@@ -4,7 +4,7 @@
 
 id: com.github.wwmm.easyeffects
 runtime: org.gnome.Platform
-runtime-version: '40'
+runtime-version: '41'
 sdk: org.gnome.Sdk
 command: easyeffects-wrapper
 rename-icon: easyeffects
@@ -56,9 +56,6 @@ add-extensions:
 modules:
   - name: easyeffects
     buildsystem: meson
-    build-options:
-      env: # remove this variable when meson from pip is removed.
-        PYTHONPATH: /app/utils/lib/python3.8/site-packages:/app/lib/python3.8/site-packages:/usr/lib/python3.8/site-packages
     sources:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
@@ -82,23 +79,6 @@ modules:
       - install -Dm644 -t $FLATPAK_DEST/share/licenses/$FLATPAK_ID ../LICENSE.md
       - mkdir -pm755 $FLATPAK_DEST/extensions/Plugins
     modules:
-      # Since easyeffects 6.0.0 need meson 0.57 or newer, and the gnome 40 runtime has an older one. 
-      # When the gnome 41 runtime is released this can be removed, as well as PYTHONPATH from above.
-      - name: meson
-        buildsystem: simple
-        build-commands:
-          - pip3 install --ignore-installed --exists-action=i --no-index --find-links="file://${PWD}"
-            --prefix=/$FLATPAK_DEST "meson"
-        sources:
-          - type: file
-            url: https://files.pythonhosted.org/packages/4e/be/8139f127b4db2f79c8b117c80af56a3078cc4824b5b94250c7f81a70e03b/wheel-0.37.0.tar.gz
-            sha256: e2ef7239991699e3355d54f8e968a21bb940a1dbf34a4d226741e64462516fad
-          - type: file
-            url: https://files.pythonhosted.org/packages/db/e2/c0ced9ccffb61432305665c22842ea120c0f649eec47ecf2a45c596707c4/setuptools-57.4.0.tar.gz
-            sha256: 6bac238ffdf24e8806c61440e755192470352850f3419a52f26ffe0a1a64f465
-          - type: file
-            url: https://files.pythonhosted.org/packages/63/2d/a030b1b53166776890883a521220433959e315c83ed975846b5484f43c7c/meson-0.59.0.tar.gz
-            sha256: e376c298df64b643dfe01eccb2d7b6f1e02e95aa38c19f19d120d129612ce476
 
       - name: glibmm
         buildsystem: meson
