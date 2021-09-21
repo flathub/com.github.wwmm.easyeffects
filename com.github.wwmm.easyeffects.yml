@@ -334,12 +334,12 @@ modules:
       # Ensure to update easyeffects-wrapper.sh when updating pipewire version.
       - name: pipewire
         buildsystem: meson
-    #    config-opts:
+        config-opts:
     #      - -Dgstreamer=disabled
     #      - -Dman=disabled
     #      - -Dsystemd=disabled
-    #     - -Dudev=disabled
-    #      - -Dudevrulesdir=disabled
+          - -Dudev=disabled
+          - -Dudevrulesdir=disabled
         sources:
           - type: git
             url: https://gitlab.freedesktop.org/pipewire/pipewire.git
