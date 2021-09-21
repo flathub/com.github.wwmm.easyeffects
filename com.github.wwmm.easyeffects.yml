@@ -345,3 +345,11 @@ modules:
             url: https://github.com/flatpak/libportal.git
             tag: "0.4"
             commit: f68764e288ede516d902b131cc4fadded3804059 
+            
+      - name: zenity
+        buildsystem: meson
+        sources:
+          - type: git
+            url: https://gitlab.gnome.org/GNOME/zenity
+            tag: "3.41.0"
+            commit: d8857f446b602d5fb4a41fef3d8a63507a12b72c 
