@@ -59,8 +59,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
-        tag: v6.1.2
-        commit: 89063a4b1facca2dd8db80d8c1a21c8b727884c0
+        # tag: v6.1.2
+        commit: 8885fd52eebee9b650dda628348d84bff7cb2216
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)
