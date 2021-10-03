@@ -59,8 +59,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
-        tag: v6.1.2
-        commit: 89063a4b1facca2dd8db80d8c1a21c8b727884c0
+        tag: v6.1.3
+        commit: a593cbd357a2462a34fec1ed7e1c2dc62f3560ae
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)
@@ -337,19 +337,19 @@ modules:
               type: anitya
               project-id: 141453
               url-template: https://github.com/nlohmann/json/archive/v$version.tar.gz
-              
+
       - name: libportal
         buildsystem: meson
         sources:
           - type: git
             url: https://github.com/flatpak/libportal.git
-            tag: "0.4"
-            commit: f68764e288ede516d902b131cc4fadded3804059 
-            
+            tag: '0.4'
+            commit: f68764e288ede516d902b131cc4fadded3804059
+
       - name: zenity
         buildsystem: meson
         sources:
           - type: git
             url: https://gitlab.gnome.org/GNOME/zenity
-            tag: "3.41.0"
-            commit: d8857f446b602d5fb4a41fef3d8a63507a12b72c 
+            tag: 3.41.0
+            commit: d8857f446b602d5fb4a41fef3d8a63507a12b72c
