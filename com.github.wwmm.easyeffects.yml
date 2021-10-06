@@ -87,8 +87,8 @@ modules:
         sources:
           - type: git
             url: https://gitlab.gnome.org/GNOME/glibmm.git
-            tag: 2.68.1
-            commit: 31b40adefc0d916246e60bd03a78b6ccae19f8a2
+            tag: 2.70.0
+            commit: 042e90eebca380686bbcc24d6803305b9d2c7823
             x-checker-data:
               type: git
               tag-pattern: ^([\d.]+)
