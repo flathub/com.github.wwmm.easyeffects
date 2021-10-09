@@ -58,9 +58,9 @@ modules:
     buildsystem: meson
     sources:
       - type: git
-        url: https://github.com/wwmm/easyeffects.git
-        tag: v6.1.3
-        commit: a593cbd357a2462a34fec1ed7e1c2dc62f3560ae
+        url: https://github.com/Digitalone1/easyeffects.git
+       # tag: v6.1.3
+        commit: 2850276f56031c6318129bff2bb8be996e4a1652
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)
