@@ -1,11 +1,11 @@
-From cea50ac40361333ce40ad72216e7d804806ada88 Mon Sep 17 00:00:00 2001
+From 76bfc35d1f3a690089df70344f0deadfcb040b66 Mon Sep 17 00:00:00 2001
 From: Digitalone <kurmikon@libero.it>
 Date: Mon, 13 Sep 2021 11:07:19 +0200
-Subject: [PATCH] attempt to integrate libportal
-This was made a patch and not integrated upstream due to complexity. The background portal apparently does not work on the host currently (as of 2021-09-16).
-There was no easy way of ensuring this code could be a build time option. 
-See https://github.com/wwmm/easyeffects/pull/1141
+Subject: [PATCH 1/1] attempt to integrate libportal
 
+This was made a patch and not integrated upstream due to complexity. The background portal apparently does not work on the host currently (as of 2021-09-16).
+There was no easy way of ensuring this code could be a build time option.
+See https://github.com/wwmm/easyeffects/pull/1141
 ---
  .../com.github.wwmm.easyeffects.gschema.xml   |  5 +-
  include/general_settings_ui.hpp               | 13 +++--
@@ -14,7 +14,7 @@ See https://github.com/wwmm/easyeffects/pull/1141
  4 files changed, 66 insertions(+), 7 deletions(-)
 
 diff --git a/data/schemas/com.github.wwmm.easyeffects.gschema.xml b/data/schemas/com.github.wwmm.easyeffects.gschema.xml
-index d8cd4d03..8f9b03c6 100644
+index 47dad2d9..1ffa98a8 100644
 --- a/data/schemas/com.github.wwmm.easyeffects.gschema.xml
 +++ b/data/schemas/com.github.wwmm.easyeffects.gschema.xml
 @@ -7,6 +7,9 @@
@@ -27,7 +27,7 @@ index d8cd4d03..8f9b03c6 100644
          <key name="use-dark-theme" type="b">
              <default>false</default>
          </key>
-@@ -29,4 +32,4 @@
+@@ -32,4 +35,4 @@
              <default>false</default>
          </key>
      </schema>
@@ -35,13 +35,13 @@ index d8cd4d03..8f9b03c6 100644
 \ No newline at end of file
 +</schemalist>
 diff --git a/include/general_settings_ui.hpp b/include/general_settings_ui.hpp
-index 70b4d1ae..d89b1fd7 100644
+index 8fe60be2..9e0aafc1 100644
 --- a/include/general_settings_ui.hpp
 +++ b/include/general_settings_ui.hpp
-@@ -24,8 +24,9 @@
- #include <glibmm.h>
+@@ -22,8 +22,9 @@
+ 
+ #include <giomm.h>
  #include <glibmm/i18n.h>
- #include <gtkmm.h>
 -#include <filesystem>
 +//#include <filesystem>
  #include "application.hpp"
@@ -49,7 +49,7 @@ index 70b4d1ae..d89b1fd7 100644
  #include "util.hpp"
  
  class GeneralSettingsUi : public Gtk::Box {
-@@ -37,8 +38,14 @@ class GeneralSettingsUi : public Gtk::Box {
+@@ -35,8 +36,14 @@ class GeneralSettingsUi : public Gtk::Box {
    auto operator=(const GeneralSettingsUi&&) -> GeneralSettingsUi& = delete;
    ~GeneralSettingsUi() override;
  
@@ -62,9 +62,9 @@ index 70b4d1ae..d89b1fd7 100644
 +  static void on_request_background_called(GObject* source, GAsyncResult* result, gpointer data);
 +
   private:
-   const std::string log_tag = "general_settings_ui: ";
+   inline static const std::string log_tag = "general_settings_ui: ";
  
-@@ -53,9 +60,9 @@ class GeneralSettingsUi : public Gtk::Box {
+@@ -51,9 +58,9 @@ class GeneralSettingsUi : public Gtk::Box {
  
    std::vector<sigc::connection> connections;
  
@@ -77,7 +77,7 @@ index 70b4d1ae..d89b1fd7 100644
    void on_reset_settings();
  };
 diff --git a/src/general_settings_ui.cpp b/src/general_settings_ui.cpp
-index a9c5510f..4027eba4 100644
+index 007da982..4b0dc4ac 100644
 --- a/src/general_settings_ui.cpp
 +++ b/src/general_settings_ui.cpp
 @@ -23,6 +23,13 @@ GeneralSettingsUi::GeneralSettingsUi(BaseObjectType* cobject,
@@ -94,7 +94,7 @@ index a9c5510f..4027eba4 100644
    // loading builder widgets
  
    theme_switch = builder->get_widget<Gtk::Switch>("theme_switch");
-@@ -36,7 +43,7 @@ GeneralSettingsUi::GeneralSettingsUi(BaseObjectType* cobject,
+@@ -37,7 +44,7 @@ GeneralSettingsUi::GeneralSettingsUi(BaseObjectType* cobject,
  
    // signals connection
  
@@ -103,10 +103,10 @@ index a9c5510f..4027eba4 100644
  
    reset_settings->signal_clicked().connect(sigc::mem_fun(*this, &GeneralSettingsUi::on_reset_settings));
  
-@@ -46,8 +53,13 @@ GeneralSettingsUi::GeneralSettingsUi(BaseObjectType* cobject,
-   settings->bind("process-all-inputs", process_all_inputs, "active");
+@@ -48,8 +55,13 @@ GeneralSettingsUi::GeneralSettingsUi(BaseObjectType* cobject,
    settings->bind("process-all-outputs", process_all_outputs, "active");
    settings->bind("shutdown-on-window-close", shutdown_on_window_close, "active");
+   settings->bind("use-cubic-volumes", use_cubic_volumes, "active");
 +  settings->bind("enable-autostart", enable_autostart, "active");
  
 -  init_autostart_switch();
@@ -118,7 +118,7 @@ index a9c5510f..4027eba4 100644
  }
  
  GeneralSettingsUi::~GeneralSettingsUi() {
-@@ -66,13 +78,48 @@ void GeneralSettingsUi::add_to_stack(Gtk::Stack* stack, Application* app) {
+@@ -68,13 +80,48 @@ void GeneralSettingsUi::add_to_stack(Gtk::Stack* stack, Application* app) {
    stack->add(*ui, "general_spectrum", _("General"));
  }
  
@@ -158,7 +158,7 @@ index a9c5510f..4027eba4 100644
 +
 +/*
  void GeneralSettingsUi::init_autostart_switch() {
-   const auto& path = Glib::get_user_config_dir() + "/autostart/easyeffects-service.desktop";
+   const auto path = Glib::get_user_config_dir() + "/autostart/easyeffects-service.desktop";
  
    enable_autostart->set_active(std::filesystem::is_regular_file(path) ? true : false);
  }
@@ -168,7 +168,7 @@ index a9c5510f..4027eba4 100644
    std::filesystem::path autostart_dir{Glib::get_user_config_dir() + "/autostart"};
  
    if (!std::filesystem::is_directory(autostart_dir)) {
-@@ -108,6 +155,7 @@ auto GeneralSettingsUi::on_enable_autostart(bool state) -> bool {
+@@ -110,6 +157,7 @@ auto GeneralSettingsUi::on_enable_autostart(bool state) -> bool {
  
    return false;
  }
@@ -188,3 +188,5 @@ index cd66d6de..0af79e78 100644
  	dependency('rnnoise'),
  	dependency('samplerate'),
  	dependency('rubberband'),
+-- 
+2.32.0
