@@ -353,3 +353,17 @@ modules:
             url: https://gitlab.gnome.org/GNOME/zenity
             tag: 3.41.0
             commit: d8857f446b602d5fb4a41fef3d8a63507a12b72c
+
+      - name: tbb
+        buildsystem: cmake-ninja
+        config-opts:
+          - -Wno-dev
+        sources:
+          - type: archive
+            url: https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2021.4.0.tar.gz
+            sha256: 021796c7845e155e616f5ecda16daa606ebb4c6f90b996e5c08aebab7a8d3de3
+            x-checker-data:
+              type: anitya
+              project-id: 227581
+              stable-only: true
+              url-template: https://github.com/oneapi-src/oneTBB/archive/refs/tags/v$version.tar.gz
