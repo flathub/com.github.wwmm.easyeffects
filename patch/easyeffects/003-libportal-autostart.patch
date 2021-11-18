@@ -27,13 +27,6 @@ index 47dad2d9..1ffa98a8 100644
          <key name="use-dark-theme" type="b">
              <default>false</default>
          </key>
-@@ -32,4 +35,4 @@
-             <default>false</default>
-         </key>
-     </schema>
--</schemalist>
-\ No newline at end of file
-+</schemalist>
 diff --git a/include/general_settings_ui.hpp b/include/general_settings_ui.hpp
 index 8fe60be2..9e0aafc1 100644
 --- a/include/general_settings_ui.hpp
