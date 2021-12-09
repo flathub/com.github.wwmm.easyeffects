@@ -8,6 +8,7 @@ runtime-version: '41'
 sdk: org.gnome.Sdk
 command: easyeffects-wrapper
 rename-icon: easyeffects
+copy-icon: true
 finish-args:
   - --share=ipc
   - --socket=fallback-x11
@@ -57,21 +58,24 @@ modules:
   - name: easyeffects
     buildsystem: meson
     sources:
-      - type: git
-        url: https://github.com/wwmm/easyeffects.git
-        tag: v6.1.5
-        commit: e13f757d5ac69eae9b02fbee44bb1837b9a3ca06
-        x-checker-data:
-          type: git
-          tag-pattern: ^v([\d.]+)
+      - type: archive
+        url: https://github.com/wwmm/easyeffects/archive/597f524b40aeea25f73dba91b2feea4710bbcbc6.zip
+        sha256: aac9342bb6a1d7d59f8f304d411b8ddecf5656f11054dd9cadfef7f35530299c
+        x-checker-data: 
+          type: html
+          url: https://raw.githubusercontent.com/vchernin/nightly-easyeffects-checker/main/latest_easyeffects_commit
+          version-pattern: (^.*$)
+          url-template: https://github.com/wwmm/easyeffects/archive/$version.zip
+        
       - type: file
         path: easyeffects-wrapper.sh
-      - type: patch
-        path: patch/easyeffects/001-fix-about-page-icon.patch
+    # - type: patch
+    #   path: patch/easyeffects/001-fix-about-page-icon.patch
       - type: patch
         path: patch/easyeffects/002-fix-desktop-file.patch
-      - type: patch
-        path: patch/easyeffects/003-libportal-autostart.patch
+     # - type: patch
+     #   path: patch/easyeffects/003-libportal-autostart.patch # was changed in https://github.com/wwmm/easyeffects/commit/e55c7f5e3bd2c5c475e5519a799b976c6814a988
+     # it requires fixing, and considering it doesn't work well it is probably best to just rewrite it.
       - type: shell
         commands:
           - install -Dvm 755 easyeffects-wrapper.sh $FLATPAK_DEST/bin/easyeffects-wrapper
@@ -157,7 +161,7 @@ modules:
               - /lib/atkmm*
 
           - name: cairomm
-            build-options:
+            build-commands:
               - git config fsck.skiplist "$PWD/.git/skiplist" # Necessary to skip git fsck check for a commit in the cairomm repo
               - echo "016c362e95d96e129374b07258b246bc2412c526" >> .git/skiplist # See https://gitlab.freedesktop.org/cairo/cairomm/-/issues/28
             config-opts:
@@ -375,3 +379,51 @@ modules:
             url: https://gitlab.gnome.org/GNOME/zenity
             tag: 3.41.0
             commit: d8857f446b602d5fb4a41fef3d8a63507a12b72c
+            
+      - name: libadwaita
+        buildsystem: meson
+        config-opts:
+          - -Dintrospection=disabled
+          - -Dgtk_doc=false
+          - -Dtests=false
+          - -Dexamples=false
+          - -Dvapi=false
+        sources:
+          - type: git
+            url: https://gitlab.gnome.org/GNOME/libadwaita.git
+            tag: "1.0.0.alpha.4"
+            commit: 6b447fde8f270001a0dc29ef59d3e9bf6d32dae9
+        cleanup:
+          - /include
+          - /lib/pkgconfig
+        modules:
+        - name: libsass
+          buildsystem: meson
+          cleanup:
+          - "*"
+          sources:
+          - type: git
+            url: https://github.com/lazka/libsass.git
+            branch: meson
+            commit: 302397c0c8ae2d7ab02f45ea461c2c3d768f248e
+        - name: sassc
+          buildsystem: meson
+          cleanup:
+          - "*"
+          sources:
+          - type: git
+            url: https://github.com/lazka/sassc.git
+            branch: meson
+            commit: 82803377c33247265d779af034eceb5949e78354
+                
+      - name: fmt
+        buildsystem: cmake
+        config-opts:
+          - -DCMAKE_INSTALL_PREFIX=/app
+          - -DCMAKE_INSTALL_LIBDIR=/app/lib
+          - -DBUILD_SHARED_LIBS=ON
+          - -DFMT_TEST=Off
+        sources:
+          - type: archive
+            url: https://github.com/fmtlib/fmt/releases/download/8.0.1/fmt-8.0.1.zip
+            sha256: a627a56eab9554fc1e5dd9a623d0768583b3a383ff70a4312ba68f94c9d415bf
