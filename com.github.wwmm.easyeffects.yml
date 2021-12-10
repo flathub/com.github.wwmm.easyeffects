@@ -58,14 +58,10 @@ modules:
   - name: easyeffects
     buildsystem: meson
     sources:
-      - type: archive
-        url: https://github.com/wwmm/easyeffects/archive/473cb6a985013f0e8af8136b53b27e64083ccc28.zip
-        sha256: cc8edcd8b760ee14411860e464d20ee0c96eb077d9760a9f24a9002b721f1283
-        x-checker-data:
-          type: html
-          url: https://raw.githubusercontent.com/vchernin/nightly-easyeffects-checker/main/latest_easyeffects_commit
-          version-pattern: (^.*$)
-          url-template: https://github.com/wwmm/easyeffects/archive/$version.zip
+      - type: git
+        url: https://github.com/wwmm/easyeffects.git
+        branch: master
+        commit: 473cb6a985013f0e8af8136b53b27e64083ccc28
 
       - type: file
         path: easyeffects-wrapper.sh
