@@ -60,8 +60,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
-        branch: master
-        commit: eb6937539ab21e76aa92e2cd6727468b7adcc72c
+        branch: libadwaita
+        commit: 473cb6a985013f0e8af8136b53b27e64083ccc28
 
       - type: file
         path: easyeffects-wrapper.sh
