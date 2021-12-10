@@ -12,7 +12,7 @@ jobs:
       image: ghcr.io/flathub/flatpak-external-data-checker
 
     steps:
-      - uses: actions/checkout@beta
+      - uses: actions/checkout@v2
 
       - uses: docker://ghcr.io/flathub/flatpak-external-data-checker:latest
         env:
