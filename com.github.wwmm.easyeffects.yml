@@ -189,9 +189,9 @@ modules:
                 url: https://gitlab.gnome.org/GNOME/pangomm.git
                 tag: 2.49.1
                 commit: 73a834196de6e3b016a16fab299865c0caffad26
-                x-checker-data:
-                  type: git
-                  tag-pattern: ^([\d.]+)
+            #    x-checker-data:
+            #      type: git
+            #      tag-pattern: ^([\d.]+)
             cleanup:
               - /lib/pangomm*
 
