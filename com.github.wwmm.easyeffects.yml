@@ -59,14 +59,14 @@ modules:
     buildsystem: meson
     sources:
       - type: archive
-        url: https://github.com/wwmm/easyeffects/archive/597f524b40aeea25f73dba91b2feea4710bbcbc6.zip
-        sha256: aac9342bb6a1d7d59f8f304d411b8ddecf5656f11054dd9cadfef7f35530299c
-        x-checker-data: 
+        url: https://github.com/wwmm/easyeffects/archive/473cb6a985013f0e8af8136b53b27e64083ccc28.zip
+        sha256: cc8edcd8b760ee14411860e464d20ee0c96eb077d9760a9f24a9002b721f1283
+        x-checker-data:
           type: html
           url: https://raw.githubusercontent.com/vchernin/nightly-easyeffects-checker/main/latest_easyeffects_commit
           version-pattern: (^.*$)
           url-template: https://github.com/wwmm/easyeffects/archive/$version.zip
-        
+
       - type: file
         path: easyeffects-wrapper.sh
     # - type: patch
@@ -187,8 +187,8 @@ modules:
             sources:
               - type: git
                 url: https://gitlab.gnome.org/GNOME/pangomm.git
-                tag: 2.49.1
-                commit: 73a834196de6e3b016a16fab299865c0caffad26
+                tag: 2.50.0
+                commit: cd00ba55a53b71a41fb566827db8b7d7c28c36b6
                 x-checker-data:
                   type: git
                   tag-pattern: ^([\d.]+)
@@ -347,20 +347,20 @@ modules:
       - name: tbb
         buildsystem: simple
         build-commands:
-        - make tbb tbbmalloc tbbproxy
-        - install -d usr/lib/
-        - install -m755 build/linux_*/*.so* /app/lib/
-        - install -d usr/include
-        - cp -a include/tbb /app/include/
-        - cmake -DINSTALL_DIR=/app/lib/cmake/TBB -DSYSTEM_NAME=Linux -DTBB_VERSION_FILE=/app/include/tbb/tbb_stddef.h
-          -P cmake/tbb_config_installer.cmake
+          - make tbb tbbmalloc tbbproxy
+          - install -d usr/lib/
+          - install -m755 build/linux_*/*.so* /app/lib/
+          - install -d usr/include
+          - cp -a include/tbb /app/include/
+          - cmake -DINSTALL_DIR=/app/lib/cmake/TBB -DSYSTEM_NAME=Linux -DTBB_VERSION_FILE=/app/include/tbb/tbb_stddef.h
+            -P cmake/tbb_config_installer.cmake
         sources:
-        - type: archive
-          url: https://github.com/intel/tbb/archive/v2020.3.tar.gz
-          sha256: ebc4f6aa47972daed1f7bf71d100ae5bf6931c2e3144cf299c8cc7d041dca2f3
+          - type: archive
+            url: https://github.com/intel/tbb/archive/v2020.3.tar.gz
+            sha256: ebc4f6aa47972daed1f7bf71d100ae5bf6931c2e3144cf299c8cc7d041dca2f3
           # use the same tbb version as Arch, since upstream tests on Arch primarily.
         cleanup:
-        - "/include"
+          - /include
 
             
             
@@ -379,7 +379,7 @@ modules:
             url: https://gitlab.gnome.org/GNOME/zenity
             tag: 3.41.0
             commit: d8857f446b602d5fb4a41fef3d8a63507a12b72c
-            
+
       - name: libadwaita
         buildsystem: meson
         config-opts:
@@ -391,31 +391,31 @@ modules:
         sources:
           - type: git
             url: https://gitlab.gnome.org/GNOME/libadwaita.git
-            tag: "1.0.0.alpha.4"
+            tag: 1.0.0.alpha.4
             commit: 6b447fde8f270001a0dc29ef59d3e9bf6d32dae9
         cleanup:
           - /include
           - /lib/pkgconfig
         modules:
-        - name: libsass
-          buildsystem: meson
-          cleanup:
-          - "*"
-          sources:
-          - type: git
-            url: https://github.com/lazka/libsass.git
-            branch: meson
-            commit: 302397c0c8ae2d7ab02f45ea461c2c3d768f248e
-        - name: sassc
-          buildsystem: meson
-          cleanup:
-          - "*"
-          sources:
-          - type: git
-            url: https://github.com/lazka/sassc.git
-            branch: meson
-            commit: 82803377c33247265d779af034eceb5949e78354
-                
+          - name: libsass
+            buildsystem: meson
+            cleanup:
+              - '*'
+            sources:
+              - type: git
+                url: https://github.com/lazka/libsass.git
+                branch: meson
+                commit: 302397c0c8ae2d7ab02f45ea461c2c3d768f248e
+          - name: sassc
+            buildsystem: meson
+            cleanup:
+              - '*'
+            sources:
+              - type: git
+                url: https://github.com/lazka/sassc.git
+                branch: meson
+                commit: 82803377c33247265d779af034eceb5949e78354
+
       - name: fmt
         buildsystem: cmake
         config-opts:
