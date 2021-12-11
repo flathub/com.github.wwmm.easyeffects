@@ -1,8 +1,8 @@
 # adapted from https://github.com/gasinvein/org.winehq.Wine/blob/branch/staging/.github/workflows/update.yml
-name: Check for updates
+name: Check for stable updates in master branch
 on:
   schedule:
-  - cron: "0 6 * * *" # run every 24 hours
+  - cron: "48 * * * *" # run every 24 hours, a scheduled workflow only runs if in the default branch.
   workflow_dispatch:
 
 jobs:
@@ -13,6 +13,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: master # with this workflow, f-e-d-c will specifically checkout and submit a PR against master, not beta.
 
       - uses: docker://ghcr.io/flathub/flatpak-external-data-checker:latest
         env:
