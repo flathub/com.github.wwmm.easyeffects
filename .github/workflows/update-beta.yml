@@ -2,7 +2,7 @@
 name: Check for nightly updates in beta branch
 on:
   schedule:
-  - cron: "38 * * * *" # run every 24 hours, a scheduled workflow only runs if in the default branch.
+  - cron: "0 5 * * *" # run every 24 hours, a scheduled workflow only runs if in the default branch.
   workflow_dispatch:
 
 jobs:

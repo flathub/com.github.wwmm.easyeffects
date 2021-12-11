@@ -2,7 +2,7 @@
 name: Check for stable updates in master branch
 on:
   schedule:
-  - cron: "48 * * * *" # run every 24 hours, a scheduled workflow only runs if in the default branch.
+  - cron: "0 * * * *" # run every hour, a scheduled workflow only runs if in the default branch.
   workflow_dispatch:
 
 jobs:
