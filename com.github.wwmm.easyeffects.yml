@@ -183,8 +183,8 @@ modules:
             sources:
               - type: git
                 url: https://gitlab.gnome.org/GNOME/pangomm.git
-                tag: 2.49.1
-                commit: 73a834196de6e3b016a16fab299865c0caffad26
+                tag: 2.50.0
+                commit: cd00ba55a53b71a41fb566827db8b7d7c28c36b6
                 x-checker-data:
                   type: git
                   tag-pattern: ^([\d.]+)
@@ -343,20 +343,20 @@ modules:
       - name: tbb
         buildsystem: simple
         build-commands:
-        - make tbb tbbmalloc tbbproxy
-        - install -d usr/lib/
-        - install -m755 build/linux_*/*.so* /app/lib/
-        - install -d usr/include
-        - cp -a include/tbb /app/include/
-        - cmake -DINSTALL_DIR=/app/lib/cmake/TBB -DSYSTEM_NAME=Linux -DTBB_VERSION_FILE=/app/include/tbb/tbb_stddef.h
-          -P cmake/tbb_config_installer.cmake
+          - make tbb tbbmalloc tbbproxy
+          - install -d usr/lib/
+          - install -m755 build/linux_*/*.so* /app/lib/
+          - install -d usr/include
+          - cp -a include/tbb /app/include/
+          - cmake -DINSTALL_DIR=/app/lib/cmake/TBB -DSYSTEM_NAME=Linux -DTBB_VERSION_FILE=/app/include/tbb/tbb_stddef.h
+            -P cmake/tbb_config_installer.cmake
         sources:
-        - type: archive
-          url: https://github.com/intel/tbb/archive/v2020.3.tar.gz
-          sha256: ebc4f6aa47972daed1f7bf71d100ae5bf6931c2e3144cf299c8cc7d041dca2f3
+          - type: archive
+            url: https://github.com/intel/tbb/archive/v2020.3.tar.gz
+            sha256: ebc4f6aa47972daed1f7bf71d100ae5bf6931c2e3144cf299c8cc7d041dca2f3
           # use the same tbb version as Arch, since upstream tests on Arch primarily.
         cleanup:
-        - "/include"
+          - /include
 
             
             
