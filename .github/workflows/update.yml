@@ -2,7 +2,7 @@
 name: Check for updates
 on:
   schedule:
-  - cron: "0 5 * * *" # run every 24 hours
+  - cron: "0 6 * * *" # run every 24 hours
   workflow_dispatch:
 
 jobs:
