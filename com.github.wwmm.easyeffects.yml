@@ -61,7 +61,7 @@ modules:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
         branch: libadwaita
-        commit: 0c54a96f7bd3a46ba9ad73b20d09f22da4406f5d
+        commit: e1d40dde85ba416d77f025b024175c9859bc9ab1
 
       - type: file
         path: easyeffects-wrapper.sh
