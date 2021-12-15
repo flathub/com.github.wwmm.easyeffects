@@ -60,8 +60,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
-        branch: libadwaita
-        commit: e15ae48593287c91b280198b82a8e2f02b74f6f0
+        branch: master
+        commit: 9ccebbe1ea811404ffeb8b6a5435fe17b42d5693
 
       - type: file
         path: easyeffects-wrapper.sh
@@ -80,116 +80,21 @@ modules:
       - mkdir -pm755 $FLATPAK_DEST/extensions/Plugins
     modules:
 
-      - name: glibmm
+      - name: libsigc++
         buildsystem: meson
         config-opts:
-          - -Dbuild-documentation=false
+          - -Dbuild-examples=false
         sources:
-          - type: git
-            url: https://gitlab.gnome.org/GNOME/glibmm.git
-            tag: 2.70.0
-            commit: 042e90eebca380686bbcc24d6803305b9d2c7823
+          - type: archive
+            url: https://download.gnome.org/sources/libsigc++/3.0/libsigc++-3.0.7.tar.xz   # git release doesn't provide dot dependency
+            sha256: bfbe91c0d094ea6bbc6cbd3909b7d98c6561eea8b6d9c0c25add906a6e83d733
             x-checker-data:
-              type: git
-              tag-pattern: ^([\d.]+)
-        cleanup:
-          - /lib/glibmm*
-          - /lib/giomm*
-        modules:
-
-          - name: mm-common
-            buildsystem: meson
-            sources:
-              - type: archive
-                url: https://download.gnome.org/sources/mm-common/1.0/mm-common-1.0.3.tar.xz
-                sha256: e81596625899aacf1d0bf27ccc2fcc7f373405ec48735ca1c7273c0fbcdc1ef5
-                # gnome download source missing json file that f-e-d-c needs
-                # git source results in "Error: libstdc++.tag does not exist."
-            cleanup:
-              - '*'
-
-          - name: libsigc++
-            buildsystem: meson
-            config-opts:
-              - -Dbuild-examples=false
-            sources:
-              - type: archive
-                url: https://download.gnome.org/sources/libsigc++/3.0/libsigc++-3.0.7.tar.xz   # git release doesn't provide dot dependency
-                sha256: bfbe91c0d094ea6bbc6cbd3909b7d98c6561eea8b6d9c0c25add906a6e83d733
-                x-checker-data:
-                  type: gnome
-                  name: libsigc++
-                  stable-only: true
-
-            cleanup:
-              - /lib/sigc++*
-      - name: gtkmm
-        buildsystem: meson
-        config-opts:
-          - -Dbuild-documentation=false
-        sources:
-          - type: git
-            url: https://gitlab.gnome.org/GNOME/gtkmm.git
-            tag: 4.4.0
-            commit: 44bb79e8ee6e86bdc2e6275b8b9c3bded7ec0b3a
-            x-checker-data:
-              type: git
-              tag-pattern: ^([\d.]+)
+              type: gnome
+              name: libsigc++
+              stable-only: true
 
         cleanup:
-          - /lib/gdkmm*
-          - /lib/gtkmm*
-        modules:
-
-          - name: atkmm
-            buildsystem: meson
-            config-opts:
-              - -Dbuild-documentation=false
-            sources:
-              - type: archive
-                url: https://download.gnome.org/sources/atkmm/2.36/atkmm-2.36.1.tar.xz
-                sha256: e11324bfed1b6e330a02db25cecc145dca03fb0dff47f0710c85e317687da458
-                x-checker-data:
-                  type: gnome
-                  name: atkmm
-                  stable-only: true
-            cleanup:
-              - /lib/atkmm*
-
-          - name: cairomm
-            build-commands:
-              - git config fsck.skiplist "$PWD/.git/skiplist" # Necessary to skip git fsck check for a commit in the cairomm repo
-              - echo "016c362e95d96e129374b07258b246bc2412c526" >> .git/skiplist # See https://gitlab.freedesktop.org/cairo/cairomm/-/issues/28
-            config-opts:
-              - --disable-documentation
-            sources:
-              # cairomm >= 1.14.0 requires sigc++ 3.0 and other modules require cairomm < 1.13.0
-              - type: git
-                url: https://gitlab.freedesktop.org/cairo/cairomm.git
-                tag: 1.16.1
-                commit: 61286896d11ed961add217ff4a209d10d9efb700
-                x-checker-data:
-                  type: git
-                  tag-pattern: ^([\d.]+)
-            post-install:
-              - install -Dm644 -t /app/share/licenses/cairomm COPYING
-            cleanup:
-              - /lib/cairomm*
-
-          - name: pangomm
-            buildsystem: meson
-            config-opts:
-              - -Dbuild-documentation=false
-            sources:
-              - type: git
-                url: https://gitlab.gnome.org/GNOME/pangomm.git
-                tag: 2.49.1
-                commit: 73a834196de6e3b016a16fab299865c0caffad26
-            #    x-checker-data:
-            #      type: git
-            #      tag-pattern: ^([\d.]+)
-            cleanup:
-              - /lib/pangomm*
+          - /lib/sigc++*
 
       - name: libebur128
         buildsystem: cmake-ninja
