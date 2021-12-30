@@ -61,17 +61,14 @@ modules:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
         branch: master
-        commit: bfd4418c1ae1bb960ab4cd44623a709c64459164
+        commit: 79f45755c2bc45dd18ff38740af02482b8ff7fd5
 
       - type: file
         path: easyeffects-wrapper.sh
-    # - type: patch
-    #   path: patch/easyeffects/001-fix-about-page-icon.patch
       - type: patch
         path: patch/easyeffects/002-fix-desktop-file.patch
-     # - type: patch
-     #   path: patch/easyeffects/003-libportal-autostart.patch # was changed in https://github.com/wwmm/easyeffects/commit/e55c7f5e3bd2c5c475e5519a799b976c6814a988
-     # it requires fixing, and considering it doesn't work well it is probably best to just rewrite it.
+      - type: patch
+        path: patch/easyeffects/003-libportal-autostart.patch
       - type: shell
         commands:
           - install -Dvm 755 easyeffects-wrapper.sh $FLATPAK_DEST/bin/easyeffects-wrapper

@@ -1,20 +1,22 @@
-From 76bfc35d1f3a690089df70344f0deadfcb040b66 Mon Sep 17 00:00:00 2001
-From: Digitalone <kurmikon@libero.it>
-Date: Mon, 13 Sep 2021 11:07:19 +0200
-Subject: [PATCH 1/1] attempt to integrate libportal
+From a2f468cbcc8d1f6475c6a52add5688a95455ac0d Mon Sep 17 00:00:00 2001
+From: Vincent Chernin <38842733+vchernin@users.noreply.github.com>
+Date: Mon, 27 Dec 2021 23:53:53 -0800
+Subject: [PATCH] Portal for autostart and background
 
-This was made a patch and not integrated upstream due to complexity. The background portal apparently does not work on the host currently (as of 2021-09-16).
-There was no easy way of ensuring this code could be a build time option.
-See https://github.com/wwmm/easyeffects/pull/1141
+oth the enable autostart and shutdown on window close buttons mostly correctly use the portal.
+Based on the original patch from Digitalone1
+To improve:
+	A way to not overly ask in case someone resets EasyEffects' permissions. Right now if you reset permissions, then *enable* something like shutdown on window close it will still ask for the portal.
+	Figure out weird bug where despite the portal access being previously given, EasyEffects gets killed by xdg-desktop-portal. In other words, it's in a state where it should have background permission but somehow doesn't.
 ---
- .../com.github.wwmm.easyeffects.gschema.xml   |  5 +-
- include/general_settings_ui.hpp               | 13 +++--
- src/general_settings_ui.cpp                   | 54 +++++++++++++++++--
- src/meson.build                               |  1 +
- 4 files changed, 66 insertions(+), 7 deletions(-)
+ data/schemas/com.github.wwmm.easyeffects.gschema.xml |  7 +++++--
+ include/preferences_general.hpp                      |  2 +-
+ src/meson.build                                      |  1 +
+ src/preferences_general.cpp                          | 86 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-------
+ 4 files changed, 86 insertions(+), 10 deletions(-)
 
 diff --git a/data/schemas/com.github.wwmm.easyeffects.gschema.xml b/data/schemas/com.github.wwmm.easyeffects.gschema.xml
-index 47dad2d9..1ffa98a8 100644
+index 204d7f7..c710d55 100644
 --- a/data/schemas/com.github.wwmm.easyeffects.gschema.xml
 +++ b/data/schemas/com.github.wwmm.easyeffects.gschema.xml
 @@ -7,6 +7,9 @@
@@ -27,95 +29,66 @@ index 47dad2d9..1ffa98a8 100644
          <key name="use-dark-theme" type="b">
              <default>false</default>
          </key>
-diff --git a/include/general_settings_ui.hpp b/include/general_settings_ui.hpp
-index 8fe60be2..9e0aafc1 100644
---- a/include/general_settings_ui.hpp
-+++ b/include/general_settings_ui.hpp
-@@ -22,8 +22,9 @@
+@@ -32,13 +35,13 @@
+             <default>false</default>
+         </key>
+         <key name="shutdown-on-window-close" type="b">
+-            <default>false</default>
++            <default>true</default>
+         </key>
+         <key name="use-cubic-volumes" type="b">
+             <default>false</default>
+         </key>
+         <key name="autohide-popovers" type="b">
+             <default>true</default>
+         </key>
+     </schema>
+-</schemalist>
+\ No newline at end of file
++</schemalist>
+diff --git a/include/preferences_general.hpp b/include/preferences_general.hpp
+index 76c260a..76c255d 100644
+--- a/include/preferences_general.hpp
++++ b/include/preferences_general.hpp
+@@ -20,11 +20,11 @@
+ #pragma once
  
- #include <giomm.h>
- #include <glibmm/i18n.h>
+ #include <adwaita.h>
 -#include <filesystem>
-+//#include <filesystem>
- #include "application.hpp"
-+#include "libportal/background.h"
+ #include <fstream>
+ #include <string>
+ #include "ui_helpers.hpp"
  #include "util.hpp"
++#include "libportal/background.h"
  
- class GeneralSettingsUi : public Gtk::Box {
-@@ -35,8 +36,14 @@ class GeneralSettingsUi : public Gtk::Box {
-   auto operator=(const GeneralSettingsUi&&) -> GeneralSettingsUi& = delete;
-   ~GeneralSettingsUi() override;
+ namespace ui::preferences::general {
  
-+  inline static XdpPortal* portal = nullptr;
+diff --git a/src/meson.build b/src/meson.build
+index 7dfe686..6d58b6e 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -132,6 +132,7 @@ easyeffects_deps = [
+ 	dependency('libebur128',version: '>=1.2.0'),
+ 	dependency('rnnoise'),
+ 	dependency('samplerate'),
++	dependency('libportal'),
+ 	dependency('rubberband'),
+ 	dependency('speexdsp'),
+ 	dependency('nlohmann_json'),
+diff --git a/src/preferences_general.cpp b/src/preferences_general.cpp
+index d8acd5d..f4eb14a 100644
+--- a/src/preferences_general.cpp
++++ b/src/preferences_general.cpp
+@@ -36,6 +36,67 @@ struct _PreferencesGeneral {
+ 
+ G_DEFINE_TYPE(PreferencesGeneral, preferences_general, ADW_TYPE_PREFERENCES_PAGE)
+ 
++inline static XdpPortal* portal = nullptr;
++static void update_background_portal(const bool& state);
++static void on_request_background_called(GObject* source, GAsyncResult* result, gpointer data);
 +
-   static void add_to_stack(Gtk::Stack* stack, Application* app);
- 
-+  static void update_background_portal(const bool& state);
 +
-+  static void on_request_background_called(GObject* source, GAsyncResult* result, gpointer data);
-+
-  private:
-   inline static const std::string log_tag = "general_settings_ui: ";
- 
-@@ -51,9 +58,9 @@ class GeneralSettingsUi : public Gtk::Box {
- 
-   std::vector<sigc::connection> connections;
- 
--  void init_autostart_switch();
-+  // void init_autostart_switch();
- 
--  auto on_enable_autostart(bool state) -> bool;
-+  // auto on_enable_autostart(const bool& state) -> bool;
- 
-   void on_reset_settings();
- };
-diff --git a/src/general_settings_ui.cpp b/src/general_settings_ui.cpp
-index 007da982..4b0dc4ac 100644
---- a/src/general_settings_ui.cpp
-+++ b/src/general_settings_ui.cpp
-@@ -23,6 +23,13 @@ GeneralSettingsUi::GeneralSettingsUi(BaseObjectType* cobject,
-                                      const Glib::RefPtr<Gtk::Builder>& builder,
-                                      Application* application)
-     : Gtk::Box(cobject), settings(Gio::Settings::create("com.github.wwmm.easyeffects")), app(application) {
-+  // portal initialization
-+  if (portal == nullptr) {
-+    portal = xdp_portal_new();
-+  }
-+
-+  update_background_portal(settings->get_boolean("enable-autostart"));
-+
-   // loading builder widgets
- 
-   theme_switch = builder->get_widget<Gtk::Switch>("theme_switch");
-@@ -37,7 +44,7 @@ GeneralSettingsUi::GeneralSettingsUi(BaseObjectType* cobject,
- 
-   // signals connection
- 
--  enable_autostart->signal_state_set().connect(sigc::mem_fun(*this, &GeneralSettingsUi::on_enable_autostart), false);
-+  // enable_autostart->signal_state_set().connect(sigc::mem_fun(*this, &GeneralSettingsUi::on_enable_autostart), false);
- 
-   reset_settings->signal_clicked().connect(sigc::mem_fun(*this, &GeneralSettingsUi::on_reset_settings));
- 
-@@ -48,8 +55,13 @@ GeneralSettingsUi::GeneralSettingsUi(BaseObjectType* cobject,
-   settings->bind("process-all-outputs", process_all_outputs, "active");
-   settings->bind("shutdown-on-window-close", shutdown_on_window_close, "active");
-   settings->bind("use-cubic-volumes", use_cubic_volumes, "active");
-+  settings->bind("enable-autostart", enable_autostart, "active");
- 
--  init_autostart_switch();
-+  settings->signal_changed("enable-autostart").connect([=, this](const auto& key) {
-+    update_background_portal(settings->get_boolean(key));
-+  });
-+
-+  // init_autostart_switch();
- }
- 
- GeneralSettingsUi::~GeneralSettingsUi() {
-@@ -68,13 +80,48 @@ void GeneralSettingsUi::add_to_stack(Gtk::Stack* stack, Application* app) {
-   stack->add(*ui, "general_spectrum", _("General"));
- }
- 
-+void GeneralSettingsUi::update_background_portal(const bool& state) {
++void update_background_portal(const bool& state) {
 +  XdpBackgroundFlags background_flags = XDP_BACKGROUND_FLAG_NONE;
 +
 +  g_autoptr(GPtrArray) command_line = nullptr;
@@ -137,49 +110,97 @@ index 007da982..4b0dc4ac 100644
 +  g_free(reason);
 +}
 +
-+void GeneralSettingsUi::on_request_background_called(GObject* source, GAsyncResult* result, gpointer data) {
++void on_request_background_called(GObject* source, GAsyncResult* result, gpointer data) {
 +  g_autoptr(GError) error = nullptr;
 +
 +  if (!xdp_portal_request_background_finish(portal, result, &error)) {
-+    util::warning(std::string("portal: background request failed:") + ((error) ? error->message : "unknown reason"));
++    util::warning(std::string("portal: a background request failed:") + ((error) ? error->message : "unknown reason"));
 +
 +    return;
 +  }
 +
-+  util::debug("portal: background request successfully completed");
++  util::debug("portal: a background request successfully completed");
++
 +}
 +
++
++auto on_enable_autostart(GtkSwitch* obj, gboolean state, gpointer user_data) -> gboolean {
++    update_background_portal(state);
++    return 0;
++}
++
++void on_background(GtkSwitch* btn, gboolean state, PreferencesGeneral* self) {
++    if (g_settings_get_boolean(self->settings, "enable-autostart")) {
++        util::debug("portal: requesting both background access and autostart file since autostart is enabled");
++        update_background_portal(true);
++    }
++    else {
++        util::debug("portal: requesting only background access, not creating autostart file");
++        update_background_portal(false);
++    }
++    return;
++
++}
++
++
 +/*
- void GeneralSettingsUi::init_autostart_switch() {
-   const auto path = Glib::get_user_config_dir() + "/autostart/easyeffects-service.desktop";
+ auto on_enable_autostart(GtkSwitch* obj, gboolean state, gpointer user_data) -> gboolean {
+   std::filesystem::path autostart_dir{g_get_user_config_dir() + "/autostart"s};
  
-   enable_autostart->set_active(std::filesystem::is_regular_file(path) ? true : false);
- }
+@@ -72,6 +133,7 @@ auto on_enable_autostart(GtkSwitch* obj, gboolean state, gpointer user_data) -> 
  
--auto GeneralSettingsUi::on_enable_autostart(bool state) -> bool {
-+auto GeneralSettingsUi::on_enable_autostart(const bool& state) -> bool {
-   std::filesystem::path autostart_dir{Glib::get_user_config_dir() + "/autostart"};
- 
-   if (!std::filesystem::is_directory(autostart_dir)) {
-@@ -110,6 +157,7 @@ auto GeneralSettingsUi::on_enable_autostart(bool state) -> bool {
- 
-   return false;
+   return 0;
  }
 +*/
  
- void GeneralSettingsUi::on_reset_settings() {
-   settings->reset("");
-diff --git a/src/meson.build b/src/meson.build
-index cd66d6de..0af79e78 100644
---- a/src/meson.build
-+++ b/src/meson.build
-@@ -118,6 +118,7 @@ easyeffects_deps = [
- 	dependency('sndfile'),
- 	dependency('fftw3f'),
- 	dependency('libebur128',version: '>=1.2.0'),
-+	dependency('libportal'),
- 	dependency('rnnoise'),
- 	dependency('samplerate'),
- 	dependency('rubberband'),
--- 
-2.32.0
+ void dispose(GObject* object) {
+   auto* self = EE_PREFERENCES_GENERAL(object);
+@@ -100,27 +162,37 @@ void preferences_general_class_init(PreferencesGeneralClass* klass) {
+   gtk_widget_class_bind_template_child(widget_class, PreferencesGeneral, use_cubic_volumes);
+ 
+   gtk_widget_class_bind_template_callback(widget_class, on_enable_autostart);
++  gtk_widget_class_bind_template_callback(widget_class, on_background);
+ }
+ 
+ void preferences_general_init(PreferencesGeneral* self) {
+   gtk_widget_init_template(GTK_WIDGET(self));
+ 
+   self->settings = g_settings_new("com.github.wwmm.easyeffects");
+ 
+-  // initializing some widgets
++  if (portal == nullptr) {
++     portal = xdp_portal_new();
++  }
++    
+ 
+-  gtk_switch_set_active(self->enable_autostart,
+-                        static_cast<gboolean>(std::filesystem::is_regular_file(
+-                            g_get_user_config_dir() + "/autostart/easyeffects-service.desktop"s)));
+ 
+   gsettings_bind_widgets<"process-all-inputs", "process-all-outputs", "use-dark-theme", "shutdown-on-window-close",
+-                         "use-cubic-volumes", "autohide-popovers">(
++                         "use-cubic-volumes", "autohide-popovers", "enable-autostart">(
+       self->settings, self->process_all_inputs, self->process_all_outputs, self->theme_switch,
+-      self->shutdown_on_window_close, self->use_cubic_volumes, self->autohide_popovers);
++      self->shutdown_on_window_close, self->use_cubic_volumes, self->autohide_popovers, self->enable_autostart);
++      
++
++  g_signal_connect(self->shutdown_on_window_close, "state-set", G_CALLBACK(on_background), self);
++
++
+ }
+ 
++
++
+ auto create() -> PreferencesGeneral* {
+   return static_cast<PreferencesGeneral*>(g_object_new(EE_TYPE_PREFERENCES_GENERAL, nullptr));
+ }
+ 
+-}  // namespace ui::preferences::general
+\ No newline at end of file
++
++
++}  // namespace ui::preferences::general
+--
+libgit2 1.0.1
+
