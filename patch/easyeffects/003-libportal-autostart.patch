@@ -3,7 +3,7 @@ From: Vincent Chernin <38842733+vchernin@users.noreply.github.com>
 Date: Mon, 27 Dec 2021 23:53:53 -0800
 Subject: [PATCH] Portal for autostart and background
 
-oth the enable autostart and shutdown on window close buttons mostly correctly use the portal.
+Both the enable autostart and shutdown on window close buttons mostly correctly use the portal.
 Based on the original patch from Digitalone1
 To improve:
 	A way to not overly ask in case someone resets EasyEffects' permissions. Right now if you reset permissions, then *enable* something like shutdown on window close it will still ask for the portal.
