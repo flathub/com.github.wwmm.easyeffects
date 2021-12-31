@@ -1,22 +1,24 @@
-From a2f468cbcc8d1f6475c6a52add5688a95455ac0d Mon Sep 17 00:00:00 2001
+From 01663bb36da6283802c0e8317ebe2d0246a35b55 Mon Sep 17 00:00:00 2001
 From: Vincent Chernin <38842733+vchernin@users.noreply.github.com>
 Date: Mon, 27 Dec 2021 23:53:53 -0800
 Subject: [PATCH] Portal for autostart and background
 
 Both the enable autostart and shutdown on window close buttons mostly correctly use the portal.
-Based on the original patch from Digitalone1
+Based on the original patch from Digitalone1.
+
 To improve:
-	A way to not overly ask in case someone resets EasyEffects' permissions. Right now if you reset permissions, then *enable* something like shutdown on window close it will still ask for the portal.
-	Figure out weird bug where despite the portal access being previously given, EasyEffects gets killed by xdg-desktop-portal. In other words, it's in a state where it should have background permission but somehow doesn't.
+	A way to not overly ask in case someone resets EasyEffects' permissions. Right now if you reset permissions, then *enable* something like shutdown on window close it will still ask for the portal. 
+	Figure out previously reported bug where despite the portal access being previously given, EasyEffects gets killed by xdg-desktop-portal. In other words, it's in a state where it should have background permission but somehow doesn't.
+
 ---
- data/schemas/com.github.wwmm.easyeffects.gschema.xml |  7 +++++--
- include/preferences_general.hpp                      |  2 +-
- src/meson.build                                      |  1 +
- src/preferences_general.cpp                          | 86 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-------
- 4 files changed, 86 insertions(+), 10 deletions(-)
+ .../com.github.wwmm.easyeffects.gschema.xml   |  7 +-
+ include/preferences_general.hpp               |  4 +-
+ src/meson.build                               |  1 +
+ src/preferences_general.cpp                   | 87 +++++++++++++++++--
+ 4 files changed, 88 insertions(+), 11 deletions(-)
 
 diff --git a/data/schemas/com.github.wwmm.easyeffects.gschema.xml b/data/schemas/com.github.wwmm.easyeffects.gschema.xml
-index 204d7f7..c710d55 100644
+index 204d7f78..c710d55b 100644
 --- a/data/schemas/com.github.wwmm.easyeffects.gschema.xml
 +++ b/data/schemas/com.github.wwmm.easyeffects.gschema.xml
 @@ -7,6 +7,9 @@
@@ -29,7 +31,7 @@ index 204d7f7..c710d55 100644
          <key name="use-dark-theme" type="b">
              <default>false</default>
          </key>
-@@ -32,13 +35,13 @@
+@@ -32,7 +35,7 @@
              <default>false</default>
          </key>
          <key name="shutdown-on-window-close" type="b">
@@ -38,8 +40,7 @@ index 204d7f7..c710d55 100644
          </key>
          <key name="use-cubic-volumes" type="b">
              <default>false</default>
-         </key>
-         <key name="autohide-popovers" type="b">
+@@ -41,4 +44,4 @@
              <default>true</default>
          </key>
      </schema>
@@ -47,7 +48,7 @@ index 204d7f7..c710d55 100644
 \ No newline at end of file
 +</schemalist>
 diff --git a/include/preferences_general.hpp b/include/preferences_general.hpp
-index 76c260a..76c255d 100644
+index 76c260a6..7f2ae459 100644
 --- a/include/preferences_general.hpp
 +++ b/include/preferences_general.hpp
 @@ -20,11 +20,11 @@
@@ -59,12 +60,19 @@ index 76c260a..76c255d 100644
  #include <string>
  #include "ui_helpers.hpp"
  #include "util.hpp"
-+#include "libportal/background.h"
++#include "libportal/portal.h"
  
  namespace ui::preferences::general {
  
+@@ -38,4 +38,4 @@ G_END_DECLS
+ 
+ auto create() -> PreferencesGeneral*;
+ 
+-}  // namespace ui::preferences::general
+\ No newline at end of file
++}  // namespace ui::preferences::general
 diff --git a/src/meson.build b/src/meson.build
-index 7dfe686..6d58b6e 100644
+index 7dfe6868..6d58b6e4 100644
 --- a/src/meson.build
 +++ b/src/meson.build
 @@ -132,6 +132,7 @@ easyeffects_deps = [
@@ -76,7 +84,7 @@ index 7dfe686..6d58b6e 100644
  	dependency('speexdsp'),
  	dependency('nlohmann_json'),
 diff --git a/src/preferences_general.cpp b/src/preferences_general.cpp
-index d8acd5d..f4eb14a 100644
+index d8acd5dd..15714446 100644
 --- a/src/preferences_general.cpp
 +++ b/src/preferences_general.cpp
 @@ -36,6 +36,67 @@ struct _PreferencesGeneral {
@@ -102,7 +110,7 @@ index d8acd5d..f4eb14a 100644
 +    background_flags = XDP_BACKGROUND_FLAG_AUTOSTART;
 +  }
 +
-+  auto* reason = g_strdup("EasyEffects Autostart");
++  auto* reason = g_strdup("EasyEffects Background Access");
 +
 +  xdp_portal_request_background(portal, nullptr, reason, command_line, background_flags, NULL,
 +                                on_request_background_called, nullptr);
@@ -129,7 +137,7 @@ index d8acd5d..f4eb14a 100644
 +    return 0;
 +}
 +
-+void on_background(GtkSwitch* btn, gboolean state, PreferencesGeneral* self) {
++void on_shutdown_on_window_close_called(GtkSwitch* btn, gboolean state, PreferencesGeneral* self) {
 +    if (g_settings_get_boolean(self->settings, "enable-autostart")) {
 +        util::debug("portal: requesting both background access and autostart file since autostart is enabled");
 +        update_background_portal(true);
@@ -147,7 +155,7 @@ index d8acd5d..f4eb14a 100644
  auto on_enable_autostart(GtkSwitch* obj, gboolean state, gpointer user_data) -> gboolean {
    std::filesystem::path autostart_dir{g_get_user_config_dir() + "/autostart"s};
  
-@@ -72,6 +133,7 @@ auto on_enable_autostart(GtkSwitch* obj, gboolean state, gpointer user_data) -> 
+@@ -72,12 +133,15 @@ auto on_enable_autostart(GtkSwitch* obj, gboolean state, gpointer user_data) ->
  
    return 0;
  }
@@ -155,15 +163,23 @@ index d8acd5d..f4eb14a 100644
  
  void dispose(GObject* object) {
    auto* self = EE_PREFERENCES_GENERAL(object);
-@@ -100,27 +162,37 @@ void preferences_general_class_init(PreferencesGeneralClass* klass) {
+ 
+   g_object_unref(self->settings);
+ 
++  g_settings_unbind(self->shutdown_on_window_close, "active");
++
+   util::debug(log_tag + "disposed"s);
+ 
+   G_OBJECT_CLASS(preferences_general_parent_class)->dispose(object);
+@@ -100,6 +164,7 @@ void preferences_general_class_init(PreferencesGeneralClass* klass) {
    gtk_widget_class_bind_template_child(widget_class, PreferencesGeneral, use_cubic_volumes);
  
    gtk_widget_class_bind_template_callback(widget_class, on_enable_autostart);
-+  gtk_widget_class_bind_template_callback(widget_class, on_background);
++  gtk_widget_class_bind_template_callback(widget_class, on_shutdown_on_window_close_called);
  }
  
  void preferences_general_init(PreferencesGeneral* self) {
-   gtk_widget_init_template(GTK_WIDGET(self));
+@@ -107,20 +172,28 @@ void preferences_general_init(PreferencesGeneral* self) {
  
    self->settings = g_settings_new("com.github.wwmm.easyeffects");
  
@@ -183,9 +199,8 @@ index d8acd5d..f4eb14a 100644
        self->settings, self->process_all_inputs, self->process_all_outputs, self->theme_switch,
 -      self->shutdown_on_window_close, self->use_cubic_volumes, self->autohide_popovers);
 +      self->shutdown_on_window_close, self->use_cubic_volumes, self->autohide_popovers, self->enable_autostart);
-+      
 +
-+  g_signal_connect(self->shutdown_on_window_close, "state-set", G_CALLBACK(on_background), self);
++  g_signal_connect(self->shutdown_on_window_close, "state-set", G_CALLBACK(on_shutdown_on_window_close_called), self);
 +
 +
  }
@@ -201,6 +216,6 @@ index d8acd5d..f4eb14a 100644
 +
 +
 +}  // namespace ui::preferences::general
---
-libgit2 1.0.1
+-- 
+2.33.1
 
