@@ -1,21 +1,22 @@
-From 01663bb36da6283802c0e8317ebe2d0246a35b55 Mon Sep 17 00:00:00 2001
+From 30ca2d91de6756c5f796192bf1bdfab9ab4c9ef2 Mon Sep 17 00:00:00 2001
 From: Vincent Chernin <38842733+vchernin@users.noreply.github.com>
 Date: Mon, 27 Dec 2021 23:53:53 -0800
-Subject: [PATCH] Portal for autostart and background
-
-Both the enable autostart and shutdown on window close buttons mostly correctly use the portal.
-Based on the original patch from Digitalone1.
-
-To improve:
-	A way to not overly ask in case someone resets EasyEffects' permissions. Right now if you reset permissions, then *enable* something like shutdown on window close it will still ask for the portal. 
-	Figure out previously reported bug where despite the portal access being previously given, EasyEffects gets killed by xdg-desktop-portal. In other words, it's in a state where it should have background permission but somehow doesn't.
+Subject: [PATCH] Portal for autostart and background Both the enable autostart
+ and shutdown on window close buttons mostly correctly use the portal. Based
+ on the original patch from Digitalone1. To improve: 	A way to not overly
+ ask in case someone resets EasyEffects' permissions. Right now if you reset
+ permissions, then *enable* something like shutdown on window close it will
+ still ask for the portal. 	Figure out previously reported bug where
+ despite the portal access being previously given, EasyEffects gets killed by
+ xdg-desktop-portal. In other words, it's in a state where it should have
+ background permission but somehow doesn't.
 
 ---
  .../com.github.wwmm.easyeffects.gschema.xml   |  7 +-
  include/preferences_general.hpp               |  4 +-
  src/meson.build                               |  1 +
- src/preferences_general.cpp                   | 87 +++++++++++++++++--
- 4 files changed, 88 insertions(+), 11 deletions(-)
+ src/preferences_general.cpp                   | 90 +++++++++++++++++--
+ 4 files changed, 91 insertions(+), 11 deletions(-)
 
 diff --git a/data/schemas/com.github.wwmm.easyeffects.gschema.xml b/data/schemas/com.github.wwmm.easyeffects.gschema.xml
 index 204d7f78..c710d55b 100644
@@ -84,7 +85,7 @@ index 7dfe6868..6d58b6e4 100644
  	dependency('speexdsp'),
  	dependency('nlohmann_json'),
 diff --git a/src/preferences_general.cpp b/src/preferences_general.cpp
-index d8acd5dd..15714446 100644
+index d8acd5dd..b4212b61 100644
 --- a/src/preferences_general.cpp
 +++ b/src/preferences_general.cpp
 @@ -36,6 +36,67 @@ struct _PreferencesGeneral {
@@ -179,7 +180,7 @@ index d8acd5dd..15714446 100644
  }
  
  void preferences_general_init(PreferencesGeneral* self) {
-@@ -107,20 +172,28 @@ void preferences_general_init(PreferencesGeneral* self) {
+@@ -107,20 +172,31 @@ void preferences_general_init(PreferencesGeneral* self) {
  
    self->settings = g_settings_new("com.github.wwmm.easyeffects");
  
@@ -203,6 +204,9 @@ index d8acd5dd..15714446 100644
 +  g_signal_connect(self->shutdown_on_window_close, "state-set", G_CALLBACK(on_shutdown_on_window_close_called), self);
 +
 +
++  if (!gtk_switch_get_active(self->shutdown_on_window_close)) {
++    on_shutdown_on_window_close_called(self->shutdown_on_window_close, false, self);
++  }
  }
  
 +
