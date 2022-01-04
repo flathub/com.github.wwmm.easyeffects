@@ -56,7 +56,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
-        branch: master
+        tag: 6.2.0
         commit: e6acc3e94eb824e16bb63956c8f01f388335228e
 
       - type: file
