@@ -61,14 +61,14 @@ modules:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
         branch: master
-        commit: 79f45755c2bc45dd18ff38740af02482b8ff7fd5
+        commit: 7f88daa66886a5bd5e7a83b2e9af5370a090febc
 
       - type: file
         path: easyeffects-wrapper.sh
       - type: patch
         path: patch/easyeffects/002-fix-desktop-file.patch
       - type: patch
-        path: patch/easyeffects/003-libportal-autostart.patch
+        path: patch/easyeffects/0001-Background-portal-support-for-autostart-and-shutdown.patch
       - type: shell
         commands:
           - install -Dvm 755 easyeffects-wrapper.sh $FLATPAK_DEST/bin/easyeffects-wrapper
@@ -292,12 +292,25 @@ modules:
         sources:
           - type: git
             url: https://gitlab.gnome.org/GNOME/libadwaita.git
-            tag: 1.0.0.alpha.4
-            commit: 6b447fde8f270001a0dc29ef59d3e9bf6d32dae9
+            tag: 1.0.1
+            commit: b274a0c32c51a92692e3b282f04e88f033ba73b1
         cleanup:
           - /include
           - /lib/pkgconfig
         modules:
+          - name: pango
+            buildsystem: meson
+            config-opts:
+              - -Dtests=false
+              - -Dbuild-documentation=false
+            sources:
+              - type: git
+                url: https://gitlab.gnome.org/GNOME/pango.git
+                tag: 1.50.3
+                commit: 26aadb2508f9022cbfc72e73b558c6791f5d46d9
+            cleanup:
+              - /include
+              - /lib/debug
           - name: libsass
             buildsystem: meson
             cleanup:
@@ -316,7 +329,25 @@ modules:
                 url: https://github.com/lazka/sassc.git
                 branch: meson
                 commit: 82803377c33247265d779af034eceb5949e78354
-
+          - name: gtk
+            buildsystem: meson
+            config-opts:
+              - -Dbuild-documentation=false
+              - -Dintrospection=disabled
+              - -Dgtk_doc=false
+              - -Dtests=false
+              - -Dexamples=false
+              - -Dvapi=false
+            sources:
+              - type: git
+                url: https://gitlab.gnome.org/GNOME/gtk.git
+                tag: 4.6.0
+                commit: 70cb61fb7104c76a15bc6494a10e6ff1d470f6d8
+# latest is bad, ~3 or so weeks ago is good
+            cleanup:
+              - /include
+              - /lib/debug
+      
       - name: fmt
         buildsystem: cmake
         config-opts:
