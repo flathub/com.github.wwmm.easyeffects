@@ -55,9 +55,9 @@ modules:
     buildsystem: meson
     sources:
       - type: git
-        url: https://github.com/vchernin/easyeffects.git
-        branch: fix-metainfo-complaints
-        commit: e8833ef6f54b9236a5d2191fa993d47930ab039a
+        url: https://github.com/wwmm/easyeffects.git
+        branch: master
+        commit: e6acc3e94eb824e16bb63956c8f01f388335228e
 
       - type: file
         path: easyeffects-wrapper.sh
