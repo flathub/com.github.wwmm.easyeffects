@@ -1,13 +1,10 @@
-# see https://github.com/wwmm/easyeffects/blob/master/PKGBUILD for dependencies
-# If you get errors like 137, you might need pass --jobs=1 to flatpak-builder to limit cpu threads.
-# discussion at here https://github.com/flathub/com.github.wwmm.pulseeffects/pull/53
-
 id: com.github.wwmm.easyeffects
 runtime: org.gnome.Platform
 runtime-version: '41'
 sdk: org.gnome.Sdk
 command: easyeffects-wrapper
 rename-icon: easyeffects
+copy-icon: true
 finish-args:
   - --share=ipc
   - --socket=fallback-x11
@@ -59,19 +56,17 @@ modules:
     sources:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
-        tag: v6.1.5
-        commit: e13f757d5ac69eae9b02fbee44bb1837b9a3ca06
+        tag: v6.2.0
+        commit: e6acc3e94eb824e16bb63956c8f01f388335228e
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)
       - type: file
         path: easyeffects-wrapper.sh
       - type: patch
-        path: patch/easyeffects/001-fix-about-page-icon.patch
-      - type: patch
         path: patch/easyeffects/002-fix-desktop-file.patch
       - type: patch
-        path: patch/easyeffects/003-libportal-autostart.patch
+        path: patch/easyeffects/0001-Background-portal-support-for-autostart-and-shutdown.patch
       - type: shell
         commands:
           - install -Dvm 755 easyeffects-wrapper.sh $FLATPAK_DEST/bin/easyeffects-wrapper
@@ -80,116 +75,21 @@ modules:
       - mkdir -pm755 $FLATPAK_DEST/extensions/Plugins
     modules:
 
-      - name: glibmm
+      - name: libsigc++
         buildsystem: meson
         config-opts:
-          - -Dbuild-documentation=false
+          - -Dbuild-examples=false
         sources:
-          - type: git
-            url: https://gitlab.gnome.org/GNOME/glibmm.git
-            tag: 2.70.0
-            commit: 042e90eebca380686bbcc24d6803305b9d2c7823
+          - type: archive
+            url: https://download.gnome.org/sources/libsigc++/3.0/libsigc++-3.0.7.tar.xz   # git release doesn't provide dot dependency
+            sha256: bfbe91c0d094ea6bbc6cbd3909b7d98c6561eea8b6d9c0c25add906a6e83d733
             x-checker-data:
-              type: git
-              tag-pattern: ^([\d.]+)
-        cleanup:
-          - /lib/glibmm*
-          - /lib/giomm*
-        modules:
-
-          - name: mm-common
-            buildsystem: meson
-            sources:
-              - type: archive
-                url: https://download.gnome.org/sources/mm-common/1.0/mm-common-1.0.3.tar.xz
-                sha256: e81596625899aacf1d0bf27ccc2fcc7f373405ec48735ca1c7273c0fbcdc1ef5
-                # gnome download source missing json file that f-e-d-c needs
-                # git source results in "Error: libstdc++.tag does not exist."
-            cleanup:
-              - '*'
-
-          - name: libsigc++
-            buildsystem: meson
-            config-opts:
-              - -Dbuild-examples=false
-            sources:
-              - type: archive
-                url: https://download.gnome.org/sources/libsigc++/3.0/libsigc++-3.0.7.tar.xz   # git release doesn't provide dot dependency
-                sha256: bfbe91c0d094ea6bbc6cbd3909b7d98c6561eea8b6d9c0c25add906a6e83d733
-                x-checker-data:
-                  type: gnome
-                  name: libsigc++
-                  stable-only: true
-
-            cleanup:
-              - /lib/sigc++*
-      - name: gtkmm
-        buildsystem: meson
-        config-opts:
-          - -Dbuild-documentation=false
-        sources:
-          - type: git
-            url: https://gitlab.gnome.org/GNOME/gtkmm.git
-            tag: 4.4.0
-            commit: 44bb79e8ee6e86bdc2e6275b8b9c3bded7ec0b3a
-            x-checker-data:
-              type: git
-              tag-pattern: ^([\d.]+)
+              type: gnome
+              name: libsigc++
+              stable-only: true
 
         cleanup:
-          - /lib/gdkmm*
-          - /lib/gtkmm*
-        modules:
-
-          - name: atkmm
-            buildsystem: meson
-            config-opts:
-              - -Dbuild-documentation=false
-            sources:
-              - type: archive
-                url: https://download.gnome.org/sources/atkmm/2.36/atkmm-2.36.1.tar.xz
-                sha256: e11324bfed1b6e330a02db25cecc145dca03fb0dff47f0710c85e317687da458
-                x-checker-data:
-                  type: gnome
-                  name: atkmm
-                  stable-only: true
-            cleanup:
-              - /lib/atkmm*
-
-          - name: cairomm
-            build-options:
-              - git config fsck.skiplist "$PWD/.git/skiplist" # Necessary to skip git fsck check for a commit in the cairomm repo
-              - echo "016c362e95d96e129374b07258b246bc2412c526" >> .git/skiplist # See https://gitlab.freedesktop.org/cairo/cairomm/-/issues/28
-            config-opts:
-              - --disable-documentation
-            sources:
-              # cairomm >= 1.14.0 requires sigc++ 3.0 and other modules require cairomm < 1.13.0
-              - type: git
-                url: https://gitlab.freedesktop.org/cairo/cairomm.git
-                tag: 1.16.1
-                commit: 61286896d11ed961add217ff4a209d10d9efb700
-                x-checker-data:
-                  type: git
-                  tag-pattern: ^([\d.]+)
-            post-install:
-              - install -Dm644 -t /app/share/licenses/cairomm COPYING
-            cleanup:
-              - /lib/cairomm*
-
-          - name: pangomm
-            buildsystem: meson
-            config-opts:
-              - -Dbuild-documentation=false
-            sources:
-              - type: git
-                url: https://gitlab.gnome.org/GNOME/pangomm.git
-                tag: 2.49.1
-                commit: 73a834196de6e3b016a16fab299865c0caffad26
-              #  x-checker-data:
-              #    type: git
-              #    tag-pattern: ^([\d.]+)
-            cleanup:
-              - /lib/pangomm*
+          - /lib/sigc++*
 
       - name: libebur128
         buildsystem: cmake-ninja
@@ -343,30 +243,33 @@ modules:
       - name: tbb
         buildsystem: simple
         build-commands:
-        - make tbb tbbmalloc tbbproxy
-        - install -d usr/lib/
-        - install -m755 build/linux_*/*.so* /app/lib/
-        - install -d usr/include
-        - cp -a include/tbb /app/include/
-        - cmake -DINSTALL_DIR=/app/lib/cmake/TBB -DSYSTEM_NAME=Linux -DTBB_VERSION_FILE=/app/include/tbb/tbb_stddef.h
-          -P cmake/tbb_config_installer.cmake
+          - make tbb tbbmalloc tbbproxy
+          - install -d usr/lib/
+          - install -m755 build/linux_*/*.so* /app/lib/
+          - install -d usr/include
+          - cp -a include/tbb /app/include/
+          - cmake -DINSTALL_DIR=/app/lib/cmake/TBB -DSYSTEM_NAME=Linux -DTBB_VERSION_FILE=/app/include/tbb/tbb_stddef.h
+            -P cmake/tbb_config_installer.cmake
         sources:
-        - type: archive
-          url: https://github.com/intel/tbb/archive/v2020.3.tar.gz
-          sha256: ebc4f6aa47972daed1f7bf71d100ae5bf6931c2e3144cf299c8cc7d041dca2f3
+          - type: archive
+            url: https://github.com/intel/tbb/archive/v2020.3.tar.gz
+            sha256: ebc4f6aa47972daed1f7bf71d100ae5bf6931c2e3144cf299c8cc7d041dca2f3
           # use the same tbb version as Arch, since upstream tests on Arch primarily.
         cleanup:
-        - "/include"
+          - /include
 
-            
-            
+
+
       - name: libportal
         buildsystem: meson
+        config-opts:
+          - -Ddocs=false
+          - -Dbackends=gtk4
         sources:
           - type: git
             url: https://github.com/flatpak/libportal.git
-            tag: '0.4'
-            commit: f68764e288ede516d902b131cc4fadded3804059
+            tag: '0.5'
+            commit: 467a397fd7996557f837cdc26ac07c01c62810e5
 
       - name: zenity
         buildsystem: meson
@@ -375,3 +278,81 @@ modules:
             url: https://gitlab.gnome.org/GNOME/zenity
             tag: 3.41.0
             commit: d8857f446b602d5fb4a41fef3d8a63507a12b72c
+
+      - name: libadwaita
+        buildsystem: meson
+        config-opts:
+          - -Dintrospection=disabled
+          - -Dgtk_doc=false
+          - -Dtests=false
+          - -Dexamples=false
+          - -Dvapi=false
+        sources:
+          - type: git
+            url: https://gitlab.gnome.org/GNOME/libadwaita.git
+            tag: 1.0.1
+            commit: b274a0c32c51a92692e3b282f04e88f033ba73b1
+        cleanup:
+          - /include
+          - /lib/pkgconfig
+        modules:
+          - name: pango
+            buildsystem: meson
+            config-opts:
+              - -Dtests=false
+              - -Dbuild-documentation=false
+            sources:
+              - type: git
+                url: https://gitlab.gnome.org/GNOME/pango.git
+                tag: 1.50.3
+                commit: 26aadb2508f9022cbfc72e73b558c6791f5d46d9
+            cleanup:
+              - /include
+              - /lib/debug
+          - name: libsass
+            buildsystem: meson
+            cleanup:
+              - '*'
+            sources:
+              - type: git
+                url: https://github.com/lazka/libsass.git
+                branch: meson
+                commit: 302397c0c8ae2d7ab02f45ea461c2c3d768f248e
+          - name: sassc
+            buildsystem: meson
+            cleanup:
+              - '*'
+            sources:
+              - type: git
+                url: https://github.com/lazka/sassc.git
+                branch: meson
+                commit: 82803377c33247265d779af034eceb5949e78354
+          - name: gtk
+            buildsystem: meson
+            config-opts:
+              - -Dbuild-documentation=false
+              - -Dintrospection=disabled
+              - -Dgtk_doc=false
+              - -Dtests=false
+              - -Dexamples=false
+              - -Dvapi=false
+            sources:
+              - type: git
+                url: https://gitlab.gnome.org/GNOME/gtk.git
+                tag: 4.6.0
+                commit: 70cb61fb7104c76a15bc6494a10e6ff1d470f6d8
+            cleanup:
+              - /include
+              - /lib/debug
+      
+      - name: fmt
+        buildsystem: cmake
+        config-opts:
+          - -DCMAKE_INSTALL_PREFIX=/app
+          - -DCMAKE_INSTALL_LIBDIR=/app/lib
+          - -DBUILD_SHARED_LIBS=ON
+          - -DFMT_TEST=Off
+        sources:
+          - type: archive
+            url: https://github.com/fmtlib/fmt/releases/download/8.0.1/fmt-8.0.1.zip
+            sha256: a627a56eab9554fc1e5dd9a623d0768583b3a383ff70a4312ba68f94c9d415bf

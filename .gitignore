@@ -4,3 +4,4 @@ build
 gnupg
 repo
 build-dir
+.flatpak
