@@ -1,7 +1,3 @@
-# see https://github.com/wwmm/easyeffects/blob/master/PKGBUILD for dependencies
-# If you get errors like 137, you might need pass --jobs=1 to flatpak-builder to limit cpu threads.
-# discussion at here https://github.com/flathub/com.github.wwmm.pulseeffects/pull/53
-
 id: com.github.wwmm.easyeffects
 runtime: org.gnome.Platform
 runtime-version: '41'
@@ -343,7 +339,6 @@ modules:
                 url: https://gitlab.gnome.org/GNOME/gtk.git
                 tag: 4.6.0
                 commit: 70cb61fb7104c76a15bc6494a10e6ff1d470f6d8
-# latest is bad, ~3 or so weeks ago is good
             cleanup:
               - /include
               - /lib/debug
