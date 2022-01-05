@@ -56,8 +56,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
-        tag: v6.2.0
-        commit: e6acc3e94eb824e16bb63956c8f01f388335228e
+        tag: v6.2.1
+        commit: 4d5e9cac76b224566b49b4c234f8647c54e0e3fe
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)
@@ -231,8 +231,8 @@ modules:
           - -DCMAKE_BUILD_TYPE=Release
         sources:
           - type: archive
-            url: https://github.com/nlohmann/json/archive/v3.10.4.tar.gz
-            sha256: 1155fd1a83049767360e9a120c43c578145db3204d2b309eba49fbbedd0f4ed3
+            url: https://github.com/nlohmann/json/archive/v3.10.5.tar.gz
+            sha256: 5daca6ca216495edf89d167f808d1d03c4a4d929cef7da5e10f135ae1540c7e4
             x-checker-data:
               type: anitya
               project-id: 141453
@@ -344,7 +344,7 @@ modules:
             cleanup:
               - /include
               - /lib/debug
-      
+
       - name: fmt
         buildsystem: cmake
         config-opts:
