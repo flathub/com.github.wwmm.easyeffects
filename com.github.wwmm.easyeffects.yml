@@ -57,7 +57,7 @@ modules:
       - type: git
         url: https://github.com/vchernin/easyeffects.git
         branch: improve-news-script
-        commit: eeafd642a463ce6d3a2e0c050f55ad9dcb4a5a97
+        commit: 3c7bf8746fa5cdfb2ea20757aa9f6340be3fd2a6
 
       - type: file
         path: easyeffects-wrapper.sh
