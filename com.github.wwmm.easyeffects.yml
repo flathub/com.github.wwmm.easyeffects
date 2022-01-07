@@ -55,9 +55,9 @@ modules:
     buildsystem: meson
     sources:
       - type: git
-        url: https://github.com/vchernin/easyeffects.git
-        branch: improve-news-script
-        commit: eeafd642a463ce6d3a2e0c050f55ad9dcb4a5a97
+        url: https://github.com/wwmm/easyeffects.git
+        branch: master
+        commit: 2f9a41eaedda6f60a96292d5f2ec712eb24f4a7f
 
       - type: file
         path: easyeffects-wrapper.sh
@@ -219,7 +219,7 @@ modules:
           - -Dudevrulesdir=disabled
         sources:
           - type: git
-            url: https://gitlab.freedesktop.org/pipewire/pipewire.git
+            url: https://github.com/pipewire/pipewire.git
             tag: 0.3.31
             commit: c43dabcc96e2e072cdf08e5f094bb677d9017c6b
 
