@@ -1,30 +1,24 @@
-From b35b31f1b74fa477e67d4db69537c06615d64edf Mon Sep 17 00:00:00 2001
+From e7400acc640b797ffe9543d7be976381b43c6919 Mon Sep 17 00:00:00 2001
 From: Vincent Chernin <38842733+vchernin@users.noreply.github.com>
 Date: Mon, 27 Dec 2021 23:53:53 -0800
-Subject: [PATCH] Background portal support for autostart and shutdown on
- window close switches Both the enable autostart and shutdown on window close
- buttons correctly use the portal. Based on the original patch from
- Digitalone1. To improve: 	A way to not overly ask in case someone resets
- EasyEffects' permissions. Right now if you reset permissions, then disable
- something like autostart it will still ask for the portal. Unfortuantely this
- is something that would require the portal sharing more information than it
- should, so this particular limitation will probably stay. 	Figure out
- previously reported bug where despite the portal access being previously
- given, EasyEffects gets killed by xdg-desktop-portal. In other words, it's in
- a state where it should have background permission but somehow doesn't. As of
- 2022-01-03 this one is (probably) as sanely avoided as we can with the
- portal. 	Properly finalize and don't rely on g_settings_unbind
+Subject: [PATCH] Background portal support for autostart and shutdown on window close switches
 
+oth the enable autostart and shutdown on window close buttons correctly use the portal.
+Based on the original patch from Digitalone1.
+To improve:
+	A way to not overly ask in case someone resets EasyEffects' permissions. Right now if you reset permissions, then disable something like autostart it will still ask for the portal. Unfortuantely this is something that would require the portal sharing more information than it should, so this particular limitation will probably stay.
+	Figure out previously reported bug where despite the portal access being previously given, EasyEffects gets killed by xdg-desktop-portal. In other words, it's in a state where it should have background permission but somehow doesn't. As of 2022-01-03 this one is (probably) as sanely avoided as we can with the portal.
+	Properly finalize and don't rely on g_settings_unbind
 ---
- .../com.github.wwmm.easyeffects.gschema.xml   |   7 +-
- data/ui/preferences_general.ui                |   3 +-
- include/preferences_general.hpp               |   4 +-
- src/meson.build                               |   1 +
- src/preferences_general.cpp                   | 151 +++++++++++++++++-
- 5 files changed, 152 insertions(+), 14 deletions(-)
+ data/schemas/com.github.wwmm.easyeffects.gschema.xml |   7 +++++--
+ data/ui/preferences_general.ui                       |   3 +--
+ include/preferences_general.hpp                      |   6 ++++--
+ src/meson.build                                      |   1 +
+ src/preferences_general.cpp                          | 151 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------
+ 5 files changed, 154 insertions(+), 14 deletions(-)
 
 diff --git a/data/schemas/com.github.wwmm.easyeffects.gschema.xml b/data/schemas/com.github.wwmm.easyeffects.gschema.xml
-index 204d7f78..c710d55b 100644
+index cabebb4..ad50186 100644
 --- a/data/schemas/com.github.wwmm.easyeffects.gschema.xml
 +++ b/data/schemas/com.github.wwmm.easyeffects.gschema.xml
 @@ -7,6 +7,9 @@
@@ -46,15 +40,15 @@ index 204d7f78..c710d55b 100644
          </key>
          <key name="use-cubic-volumes" type="b">
              <default>false</default>
-@@ -41,4 +44,4 @@
-             <default>true</default>
+@@ -44,4 +47,4 @@
+             <default>false</default>
          </key>
      </schema>
 -</schemalist>
 \ No newline at end of file
 +</schemalist>
 diff --git a/data/ui/preferences_general.ui b/data/ui/preferences_general.ui
-index 0feb7a7b..007addb6 100644
+index d8673bd..95ddda5 100644
 --- a/data/ui/preferences_general.ui
 +++ b/data/ui/preferences_general.ui
 @@ -15,7 +15,6 @@
@@ -65,7 +59,7 @@ index 0feb7a7b..007addb6 100644
                              </object>
                          </child>
                      </object>
-@@ -103,4 +102,4 @@
+@@ -117,4 +116,4 @@
              </object>
          </child>
      </template>
@@ -73,10 +67,10 @@ index 0feb7a7b..007addb6 100644
 \ No newline at end of file
 +</interface>
 diff --git a/include/preferences_general.hpp b/include/preferences_general.hpp
-index 76c260a6..7f2ae459 100644
+index 76c260a..a717663 100644
 --- a/include/preferences_general.hpp
 +++ b/include/preferences_general.hpp
-@@ -20,11 +20,11 @@
+@@ -20,11 +20,13 @@
  #pragma once
  
  #include <adwaita.h>
@@ -86,10 +80,12 @@ index 76c260a6..7f2ae459 100644
  #include "ui_helpers.hpp"
  #include "util.hpp"
 +#include "libportal/portal.h"
++#include "libportal-gtk4/portal-gtk4.h"
++
  
  namespace ui::preferences::general {
  
-@@ -38,4 +38,4 @@ G_END_DECLS
+@@ -38,4 +40,4 @@ G_END_DECLS
  
  auto create() -> PreferencesGeneral*;
  
@@ -97,7 +93,7 @@ index 76c260a6..7f2ae459 100644
 \ No newline at end of file
 +}  // namespace ui::preferences::general
 diff --git a/src/meson.build b/src/meson.build
-index b82d4842..e913133e 100644
+index b82d484..e913133 100644
 --- a/src/meson.build
 +++ b/src/meson.build
 @@ -132,6 +132,7 @@ easyeffects_deps = [
@@ -109,11 +105,11 @@ index b82d4842..e913133e 100644
  	dependency('speexdsp'),
  	dependency('nlohmann_json'),
 diff --git a/src/preferences_general.cpp b/src/preferences_general.cpp
-index d8acd5dd..4c141600 100644
+index 3827fed..9e1a237 100644
 --- a/src/preferences_general.cpp
 +++ b/src/preferences_general.cpp
 @@ -32,10 +32,118 @@ struct _PreferencesGeneral {
-       *use_cubic_volumes, *autohide_popovers;
+       *use_cubic_volumes, *autohide_popovers, *reset_volume_on_startup;
  
    GSettings* settings;
 +
@@ -231,7 +227,7 @@ index d8acd5dd..4c141600 100644
  auto on_enable_autostart(GtkSwitch* obj, gboolean state, gpointer user_data) -> gboolean {
    std::filesystem::path autostart_dir{g_get_user_config_dir() + "/autostart"s};
  
-@@ -72,12 +180,16 @@ auto on_enable_autostart(GtkSwitch* obj, gboolean state, gpointer user_data) ->
+@@ -72,12 +180,16 @@ auto on_enable_autostart(GtkSwitch* obj, gboolean state, gpointer user_data) -> 
  
    return 0;
  }
@@ -248,15 +244,15 @@ index d8acd5dd..4c141600 100644
    util::debug(log_tag + "disposed"s);
  
    G_OBJECT_CLASS(preferences_general_parent_class)->dispose(object);
-@@ -100,6 +212,7 @@ void preferences_general_class_init(PreferencesGeneralClass* klass) {
-   gtk_widget_class_bind_template_child(widget_class, PreferencesGeneral, use_cubic_volumes);
+@@ -101,27 +213,50 @@ void preferences_general_class_init(PreferencesGeneralClass* klass) {
+   gtk_widget_class_bind_template_child(widget_class, PreferencesGeneral, reset_volume_on_startup);
  
    gtk_widget_class_bind_template_callback(widget_class, on_enable_autostart);
 +  gtk_widget_class_bind_template_callback(widget_class, on_shutdown_on_window_close_called);
  }
  
  void preferences_general_init(PreferencesGeneral* self) {
-@@ -107,20 +220,42 @@ void preferences_general_init(PreferencesGeneral* self) {
+   gtk_widget_init_template(GTK_WIDGET(self));
  
    self->settings = g_settings_new("com.github.wwmm.easyeffects");
  
@@ -270,11 +266,11 @@ index d8acd5dd..4c141600 100644
 +  }
  
    gsettings_bind_widgets<"process-all-inputs", "process-all-outputs", "use-dark-theme", "shutdown-on-window-close",
--                         "use-cubic-volumes", "autohide-popovers">(
-+                         "use-cubic-volumes", "autohide-popovers", "enable-autostart">(
+-                         "use-cubic-volumes", "autohide-popovers", "reset-volume-on-startup">(
++                         "use-cubic-volumes", "autohide-popovers", "reset-volume-on-startup", "enable-autostart">(
        self->settings, self->process_all_inputs, self->process_all_outputs, self->theme_switch,
--      self->shutdown_on_window_close, self->use_cubic_volumes, self->autohide_popovers);
-+      self->shutdown_on_window_close, self->use_cubic_volumes, self->autohide_popovers, self->enable_autostart);
+-      self->shutdown_on_window_close, self->use_cubic_volumes, self->autohide_popovers, self->reset_volume_on_startup);
++      self->shutdown_on_window_close, self->use_cubic_volumes, self->autohide_popovers, self->reset_volume_on_startup, self->enable_autostart);
 +
 +  g_signal_connect(self->enable_autostart, "state-set", G_CALLBACK(on_enable_autostart), self);
 +  g_signal_connect(self->shutdown_on_window_close, "state-set", G_CALLBACK(on_shutdown_on_window_close_called), self);
@@ -308,6 +304,6 @@ index d8acd5dd..4c141600 100644
 +
 +
 +}  // namespace ui::preferences::general
--- 
-2.33.1
+--
+libgit2 1.0.1
 
