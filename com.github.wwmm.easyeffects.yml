@@ -57,11 +57,12 @@ modules:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
         # tag: v6.2.1
-        commit: 2f9a41eaedda6f60a96292d5f2ec712eb24f4a7f
+        commit: 25bcbdd6f660ca97acbc6719f0b659096c8ec537
         # is 6.2.1 + appstream fixes
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)
+        tag: v6.2.2
       - type: file
         path: easyeffects-wrapper.sh
       - type: patch
@@ -170,8 +171,8 @@ modules:
               - /lib/pkgconfig
             sources:
               - type: archive
-                url: https://breakfastquay.com/files/releases/rubberband-2.0.0.tar.bz2
-                sha256: eccbf0545496ce3386a2433ceec31e6576a76ed6884310e4b465003bfe260286
+                url: https://breakfastquay.com/files/releases/rubberband-2.0.2.tar.bz2
+                sha256: b9eac027e797789ae99611c9eaeaf1c3a44cc804f9c8a0441a0d1d26f3d6bdf9
                 x-checker-data:
                   type: html
                   url: https://www.breakfastquay.com/rubberband/
@@ -345,7 +346,7 @@ modules:
             cleanup:
               - /include
               - /lib/debug
-      
+
       - name: fmt
         buildsystem: cmake
         config-opts:
