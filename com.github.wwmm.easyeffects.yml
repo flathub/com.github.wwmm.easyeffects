@@ -61,6 +61,7 @@ modules:
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)
+          is-critical-source: true
       - type: file
         path: easyeffects-wrapper.sh
       - type: patch
