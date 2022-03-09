@@ -56,8 +56,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
-        tag: v6.2.3
-        commit: 015ff8b198ee3fa986d8f61af2b41cbc660e7ca6
+        tag: v6.2.4
+        commit: 44642c07e7321b5b88bc28dee47cb63796d3086e
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)
@@ -81,8 +81,8 @@ modules:
           - -Dbuild-examples=false
         sources:
           - type: archive
-            url: https://download.gnome.org/sources/libsigc++/3.0/libsigc++-3.0.7.tar.xz   # git release doesn't provide dot dependency
-            sha256: bfbe91c0d094ea6bbc6cbd3909b7d98c6561eea8b6d9c0c25add906a6e83d733
+            url: https://download.gnome.org/sources/libsigc++/3.2/libsigc++-3.2.0.tar.xz   # git release doesn't provide dot dependency
+            sha256: 8cdcb986e3f0a7c5b4474aa3c833d676e62469509f4899110ddf118f04082651
             x-checker-data:
               type: gnome
               name: libsigc++
