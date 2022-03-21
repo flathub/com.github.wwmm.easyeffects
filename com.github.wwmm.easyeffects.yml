@@ -1,6 +1,6 @@
 id: com.github.wwmm.easyeffects
 runtime: org.gnome.Platform
-runtime-version: '41'
+runtime-version: '42'
 sdk: org.gnome.Sdk
 command: easyeffects-wrapper
 rename-icon: easyeffects
@@ -205,7 +205,6 @@ modules:
             url: https://github.com/xiph/rnnoise.git
             commit: 1cbdbcf1283499bbb2230a6b0f126eb9b236defd
           #  x-checker-data: might not work properly since no tags upstream: https://github.com/xiph/rnnoise/issues/137
-
         cleanup:
           - /share/doc/rnnoise
 
@@ -242,8 +241,6 @@ modules:
               project-id: 141453
               url-template: https://github.com/nlohmann/json/archive/v$version.tar.gz
 
-
-
       - name: tbb
         buildsystem: simple
         build-commands:
@@ -261,8 +258,6 @@ modules:
           # use the same tbb version as Arch, since upstream tests on Arch primarily.
         cleanup:
           - /include
-
-
 
       - name: libportal
         buildsystem: meson
@@ -283,71 +278,6 @@ modules:
             tag: 3.41.0
             commit: d8857f446b602d5fb4a41fef3d8a63507a12b72c
 
-      - name: libadwaita
-        buildsystem: meson
-        config-opts:
-          - -Dintrospection=disabled
-          - -Dgtk_doc=false
-          - -Dtests=false
-          - -Dexamples=false
-          - -Dvapi=false
-        sources:
-          - type: git
-            url: https://gitlab.gnome.org/GNOME/libadwaita.git
-            tag: 1.0.1
-            commit: b274a0c32c51a92692e3b282f04e88f033ba73b1
-        cleanup:
-          - /include
-          - /lib/pkgconfig
-        modules:
-          - name: pango
-            buildsystem: meson
-            config-opts:
-              - -Dtests=false
-              - -Dbuild-documentation=false
-            sources:
-              - type: git
-                url: https://gitlab.gnome.org/GNOME/pango.git
-                tag: 1.50.3
-                commit: 26aadb2508f9022cbfc72e73b558c6791f5d46d9
-            cleanup:
-              - /include
-              - /lib/debug
-          - name: libsass
-            buildsystem: meson
-            cleanup:
-              - '*'
-            sources:
-              - type: git
-                url: https://github.com/lazka/libsass.git
-                branch: meson
-                commit: 302397c0c8ae2d7ab02f45ea461c2c3d768f248e
-          - name: sassc
-            buildsystem: meson
-            cleanup:
-              - '*'
-            sources:
-              - type: git
-                url: https://github.com/lazka/sassc.git
-                branch: meson
-                commit: 82803377c33247265d779af034eceb5949e78354
-          - name: gtk
-            buildsystem: meson
-            config-opts:
-              - -Dbuild-documentation=false
-              - -Dintrospection=disabled
-              - -Dgtk_doc=false
-              - -Dtests=false
-              - -Dexamples=false
-              - -Dvapi=false
-            sources:
-              - type: git
-                url: https://gitlab.gnome.org/GNOME/gtk.git
-                tag: 4.6.0
-                commit: 70cb61fb7104c76a15bc6494a10e6ff1d470f6d8
-            cleanup:
-              - /include
-              - /lib/debug
       - name: fmt
         buildsystem: cmake
         config-opts:
