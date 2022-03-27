@@ -1,6 +1,6 @@
 id: com.github.wwmm.easyeffects
 runtime: org.gnome.Platform
-runtime-version: '41'
+runtime-version: '42'
 sdk: org.gnome.Sdk
 command: easyeffects-wrapper
 rename-icon: easyeffects
@@ -57,8 +57,7 @@ modules:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
         branch: master
-        commit: 88e502873ed106bfd683e13315fb278cc0a1412d
-
+        commit: 36a43014bf3fe4f30187be9cbf9b630452f18866
       - type: file
         path: easyeffects-wrapper.sh
       - type: patch
@@ -203,7 +202,6 @@ modules:
             url: https://github.com/xiph/rnnoise.git
             commit: 1cbdbcf1283499bbb2230a6b0f126eb9b236defd
           #  x-checker-data: might not work properly since no tags upstream: https://github.com/xiph/rnnoise/issues/137
-
         cleanup:
           - /share/doc/rnnoise
 
@@ -220,8 +218,12 @@ modules:
         sources:
           - type: git
             url: https://github.com/pipewire/pipewire.git
-            tag: 0.3.31
-            commit: c43dabcc96e2e072cdf08e5f094bb677d9017c6b
+            tag: 0.3.41
+            commit: 717fb64e4e4477b5a3bfb2d6f8def273b52b7259
+          - type: git
+            url: https://gitlab.freedesktop.org/pipewire/media-session.git
+            commit: f71506321393a0f85f6da0427cd99efa99f2d1e2
+            dest: subprojects/media-session
 
       - name: nlohmann-json
         buildsystem: cmake-ninja
@@ -235,8 +237,6 @@ modules:
               type: anitya
               project-id: 141453
               url-template: https://github.com/nlohmann/json/archive/v$version.tar.gz
-
-
 
       - name: tbb
         buildsystem: simple
@@ -256,8 +256,6 @@ modules:
         cleanup:
           - /include
 
-
-
       - name: libportal
         buildsystem: meson
         config-opts:
@@ -276,72 +274,6 @@ modules:
             url: https://gitlab.gnome.org/GNOME/zenity
             tag: 3.41.0
             commit: d8857f446b602d5fb4a41fef3d8a63507a12b72c
-
-      - name: libadwaita
-        buildsystem: meson
-        config-opts:
-          - -Dintrospection=disabled
-          - -Dgtk_doc=false
-          - -Dtests=false
-          - -Dexamples=false
-          - -Dvapi=false
-        sources:
-          - type: git
-            url: https://gitlab.gnome.org/GNOME/libadwaita.git
-            tag: 1.0.1
-            commit: b274a0c32c51a92692e3b282f04e88f033ba73b1
-        cleanup:
-          - /include
-          - /lib/pkgconfig
-        modules:
-          - name: pango
-            buildsystem: meson
-            config-opts:
-              - -Dtests=false
-              - -Dbuild-documentation=false
-            sources:
-              - type: git
-                url: https://gitlab.gnome.org/GNOME/pango.git
-                tag: 1.50.3
-                commit: 26aadb2508f9022cbfc72e73b558c6791f5d46d9
-            cleanup:
-              - /include
-              - /lib/debug
-          - name: libsass
-            buildsystem: meson
-            cleanup:
-              - '*'
-            sources:
-              - type: git
-                url: https://github.com/lazka/libsass.git
-                branch: meson
-                commit: 302397c0c8ae2d7ab02f45ea461c2c3d768f248e
-          - name: sassc
-            buildsystem: meson
-            cleanup:
-              - '*'
-            sources:
-              - type: git
-                url: https://github.com/lazka/sassc.git
-                branch: meson
-                commit: 82803377c33247265d779af034eceb5949e78354
-          - name: gtk
-            buildsystem: meson
-            config-opts:
-              - -Dbuild-documentation=false
-              - -Dintrospection=disabled
-              - -Dgtk_doc=false
-              - -Dtests=false
-              - -Dexamples=false
-              - -Dvapi=false
-            sources:
-              - type: git
-                url: https://gitlab.gnome.org/GNOME/gtk.git
-                tag: 4.6.0
-                commit: 70cb61fb7104c76a15bc6494a10e6ff1d470f6d8
-            cleanup:
-              - /include
-              - /lib/debug
 
       - name: fmt
         buildsystem: cmake
