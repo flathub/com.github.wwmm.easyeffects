@@ -57,7 +57,7 @@ modules:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
         branch: master
-        commit: 685b9f8956f7d331e34b3d67cb414e9f15be023a
+        commit: 8ffc42eccb67fab83d5f96bcf4505fa55799240c
       - type: file
         path: easyeffects-wrapper.sh
       - type: patch
