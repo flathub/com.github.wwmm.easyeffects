@@ -1,4 +1,4 @@
-From bc5285f225db0c1de2111a59c0a547c1fed07f50 Mon Sep 17 00:00:00 2001
+From e7393ce546459230afc304e70160e48f7c49ed2f Mon Sep 17 00:00:00 2001
 From: Vincent Chernin <38842733+vchernin@users.noreply.github.com>
 Date: Mon, 27 Dec 2021 23:53:53 -0800
 Subject: [PATCH] Background portal support for autostart and shutdown on window close switches
@@ -11,11 +11,11 @@ To improve:
 	Properly finalize and don't rely on g_settings_unbind
 ---
  data/schemas/com.github.wwmm.easyeffects.gschema.xml |   7 +++++--
- data/ui/preferences_general.ui                       |   3 +--
+ data/ui/preferences_general.ui                       |   1 -
  include/preferences_general.hpp                      |   6 ++++--
  src/meson.build                                      |   1 +
- src/preferences_general.cpp                          | 153 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------
- 5 files changed, 156 insertions(+), 14 deletions(-)
+ src/preferences_general.cpp                          | 169 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------
+ 5 files changed, 171 insertions(+), 13 deletions(-)
 
 diff --git a/data/schemas/com.github.wwmm.easyeffects.gschema.xml b/data/schemas/com.github.wwmm.easyeffects.gschema.xml
 index 48ed8f0..1461890 100644
@@ -48,7 +48,7 @@ index 48ed8f0..1461890 100644
 \ No newline at end of file
 +</schemalist>
 diff --git a/data/ui/preferences_general.ui b/data/ui/preferences_general.ui
-index f158005..a66ca01 100644
+index 0ca15e4..e51519c 100644
 --- a/data/ui/preferences_general.ui
 +++ b/data/ui/preferences_general.ui
 @@ -15,7 +15,6 @@
@@ -59,13 +59,6 @@ index f158005..a66ca01 100644
                              </object>
                          </child>
                      </object>
-@@ -139,4 +138,4 @@
-             </object>
-         </child>
-     </template>
--</interface>
-\ No newline at end of file
-+</interface>
 diff --git a/include/preferences_general.hpp b/include/preferences_general.hpp
 index 76c260a..a717663 100644
 --- a/include/preferences_general.hpp
@@ -93,7 +86,7 @@ index 76c260a..a717663 100644
 \ No newline at end of file
 +}  // namespace ui::preferences::general
 diff --git a/src/meson.build b/src/meson.build
-index 5bbed56..06dd8ed 100644
+index df68a56..58f31bd 100644
 --- a/src/meson.build
 +++ b/src/meson.build
 @@ -133,6 +133,7 @@ easyeffects_deps = [
@@ -105,10 +98,10 @@ index 5bbed56..06dd8ed 100644
  	dependency('speexdsp'),
  	dependency('nlohmann_json'),
 diff --git a/src/preferences_general.cpp b/src/preferences_general.cpp
-index 3cecb33..da46082 100644
+index 3cecb33..708688c 100644
 --- a/src/preferences_general.cpp
 +++ b/src/preferences_general.cpp
-@@ -34,10 +34,118 @@ struct _PreferencesGeneral {
+@@ -34,10 +34,134 @@ struct _PreferencesGeneral {
    GtkSpinButton* inactivity_timeout;
  
    GSettings* settings;
@@ -156,6 +149,22 @@ index 3cecb33..da46082 100644
 +    util::warning(std::string("portal: a background request failed: ") + ((error) ? error->message : "unknown reason"));
 +    util::warning(std::string("portal: background portal access has likely been denied"));
 +    util::warning(std::string("portal: to let EasyEffects ask for the portal again, run flatpak permission-reset com.github.wwmm.easyeffects"));
++
++
++    // this seems wrong but also works?
++    auto* window_levels = gtk_window_get_toplevels();
++
++    GtkWidget* dialog = gtk_message_dialog_new ((GtkWindow*) g_list_model_get_item(window_levels, 0),
++                                     GTK_DIALOG_MODAL,
++                                     GTK_MESSAGE_WARNING,
++                                     GTK_BUTTONS_CLOSE,
++                                     "Unable to get background access: %s",
++                                     ((error) ? error->message : "Unknown reason"))
++                                     ;
++    gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "To let EasyEffects ask again, run: \nflatpak permission-reset com.github.wwmm.easyeffects");
++
++    gtk_widget_show(dialog);
++    g_signal_connect (dialog, "response", G_CALLBACK (gtk_window_destroy), NULL);
 +
 +
 +    if (gtk_switch_get_active(((PreferencesGeneral *)self)->enable_autostart) == true || gtk_switch_get_state(((PreferencesGeneral *)self)->enable_autostart) == true) {
@@ -227,7 +236,7 @@ index 3cecb33..da46082 100644
  auto on_enable_autostart(GtkSwitch* obj, gboolean state, gpointer user_data) -> gboolean {
    std::filesystem::path autostart_dir{g_get_user_config_dir() + "/autostart"s};
  
-@@ -74,12 +182,16 @@ auto on_enable_autostart(GtkSwitch* obj, gboolean state, gpointer user_data) -> 
+@@ -74,12 +198,16 @@ auto on_enable_autostart(GtkSwitch* obj, gboolean state, gpointer user_data) -> 
  
    return 0;
  }
@@ -244,7 +253,7 @@ index 3cecb33..da46082 100644
    util::debug(log_tag + "disposed"s);
  
    G_OBJECT_CLASS(preferences_general_parent_class)->dispose(object);
-@@ -104,30 +216,55 @@ void preferences_general_class_init(PreferencesGeneralClass* klass) {
+@@ -104,30 +232,55 @@ void preferences_general_class_init(PreferencesGeneralClass* klass) {
    gtk_widget_class_bind_template_child(widget_class, PreferencesGeneral, inactivity_timeout);
  
    gtk_widget_class_bind_template_callback(widget_class, on_enable_autostart);

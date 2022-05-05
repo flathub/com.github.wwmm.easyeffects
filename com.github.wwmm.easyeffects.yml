@@ -28,7 +28,7 @@ cleanup:
 add-extensions:
   org.freedesktop.LinuxAudio.Plugins:
     directory: extensions/Plugins
-    version: '20.08'
+    version: '21.08'
     add-ld-path: lib
     merge-dirs: lv2
     subdirectories: true
@@ -36,7 +36,7 @@ add-extensions:
 
   org.freedesktop.LinuxAudio.Plugins.LSP:
     directory: extensions/Plugins/LSP
-    version: '20.08'
+    version: '21.08'
     add-ld-path: lib
     merge-dirs: lv2
     autodelete: false
@@ -44,7 +44,7 @@ add-extensions:
 
   org.freedesktop.LinuxAudio.Plugins.ZamPlugins:
     directory: extensions/Plugins/ZamPlugins
-    version: '20.08'
+    version: '21.08'
     add-ld-path: lib
     merge-dirs: lv2
     autodelete: false
@@ -57,7 +57,7 @@ modules:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
         branch: master
-        commit: e628e7924d6767fdedd57a21aefa9804ac55da4b
+        commit: e20d4e47eb6e2406c95e6ff5023486ebbe1067b9
       - type: file
         path: easyeffects-wrapper.sh
       - type: patch
