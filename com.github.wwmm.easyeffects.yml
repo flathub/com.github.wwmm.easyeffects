@@ -50,6 +50,14 @@ add-extensions:
     autodelete: false
     subdirectories: true
 
+  org.freedesktop.LinuxAudio.Plugins.MDA:
+    directory: extensions/Plugins/MDA
+    version: '21.08'
+    add-ld-path: lib
+    merge-dirs: lv2
+    autodelete: false
+    subdirectories: true
+
 modules:
   - name: easyeffects
     buildsystem: meson
