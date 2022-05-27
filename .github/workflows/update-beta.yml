@@ -1,8 +1,8 @@
 # adapted from https://github.com/gasinvein/org.winehq.Wine/blob/branch/staging/.github/workflows/update.yml
 name: Check for nightly updates in beta branch
 on:
-  schedule:
-  - cron: "0 5,6 * * *" # run twice very 24 hours, a scheduled workflow only runs if in the default branch. 
+  # schedule:
+  # - cron: "0 5,6 * * *" # run twice very 24 hours, a scheduled workflow only runs if in the default branch. 
   # We need to run a second time so it can be automatically merged.
   workflow_dispatch:
 
