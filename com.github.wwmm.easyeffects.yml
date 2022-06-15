@@ -158,8 +158,8 @@ modules:
             sources:
               - type: git
                 url: https://gitlab.xiph.org/xiph/speexdsp
-                tag: SpeexDSP-1.2.0
-                commit: 64cbfa9bca7479a758351aa02bb4abdd76baa9e7
+                tag: SpeexDSP-1.2rc3
+                commit: 887ac103dbbd0533ed501fc3dd599c876cc0eec7
                 x-checker-data:
                   type: git
                   tag-pattern: ^SpeexDSP-([\d.]+)
