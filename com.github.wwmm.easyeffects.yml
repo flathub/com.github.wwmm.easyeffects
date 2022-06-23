@@ -3,8 +3,6 @@ runtime: org.gnome.Platform
 runtime-version: '42'
 sdk: org.gnome.Sdk
 command: easyeffects-wrapper
-rename-icon: easyeffects
-copy-icon: true
 finish-args:
   - --share=ipc
   - --socket=fallback-x11
@@ -50,6 +48,14 @@ add-extensions:
     autodelete: false
     subdirectories: true
 
+  org.freedesktop.LinuxAudio.Plugins.MDA:
+    directory: extensions/Plugins/MDA
+    version: '21.08'
+    add-ld-path: lib
+    merge-dirs: lv2
+    autodelete: false
+    subdirectories: true
+
 modules:
   - name: easyeffects
     buildsystem: meson
@@ -57,7 +63,7 @@ modules:
       - type: git
         url: https://github.com/wwmm/easyeffects.git
         branch: master
-        commit: 5a9eabc13ae100b8bda7723b62e4ac432cfc5220
+        commit: 78258aa20ffd5dd1daf743888dbf633d1e1b4b43
       - type: file
         path: easyeffects-wrapper.sh
       - type: patch
@@ -147,8 +153,8 @@ modules:
             sources:
               - type: git
                 url: https://gitlab.xiph.org/xiph/speexdsp
-                tag: SpeexDSP-1.2.0
-                commit: 64cbfa9bca7479a758351aa02bb4abdd76baa9e7
+                tag: SpeexDSP-1.2.1
+                commit: 1b28a0f61bc31162979e1f26f3981fc3637095c8
                 x-checker-data:
                   type: git
                   tag-pattern: ^SpeexDSP-([\d.]+)
