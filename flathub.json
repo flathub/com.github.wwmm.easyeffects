@@ -1,4 +1,5 @@
 {
     "automerge-flathubbot-prs": true,
-    "disable-external-data-checker": true
+    "disable-external-data-checker": true,
+    "end-of-life": "EasyEffects beta builds on Flathub-beta are no longer maintained. Flatpak bundles are now produced in upstream PRs and in master for testers."
 }
