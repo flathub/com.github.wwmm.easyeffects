@@ -1,4 +1,3 @@
 [submodule "easyeffects"]
 	path = easyeffects
-	url = https://github.com/vchernin/easyeffects
-	branch = flatpak-ci-builds
+	url = https://github.com/wwmm/easyeffects
