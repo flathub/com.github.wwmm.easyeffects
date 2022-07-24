@@ -25,4 +25,4 @@ jobs:
           EMAIL: ${{ github.actor }}@users.noreply.github.com
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: --update --never-fork com.github.wwmm.easyeffects.yml
+          args: --update --never-fork com.github.wwmm.easyeffects.json
