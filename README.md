@@ -1,0 +1,1 @@
+This is a downstream Flatpak package of [EasyEffects](https://github.com/wwmm/easyeffects). The manifest is maintained upstream.
