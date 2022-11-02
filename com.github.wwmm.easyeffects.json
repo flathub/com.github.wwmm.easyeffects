@@ -67,9 +67,15 @@
             ],
             "sources": [
                 {
-                    "//": "Should be type: git for downstream sources, e.g. when using flatpak-builder with easyeffects as a submodule. This ensures the commit can be found for the build debug info. Type dir works everywhere else I have tested.",
+                    "//" : "cant use a local git dir for the files because of flatpak-builder-lint errors. Instead have the repo here, and make sure easyeffects submodule is kept up to date.",
                     "type": "git",
-                    "path": "easyeffects"
+                    "url": "https://github.com/wwmm/easyeffects",
+                    "commit": "9b2e89508c9a7df1e112f1de12940a086eb483b7",
+                    "tag": "v7.0.0",
+                    "x-checker-data": {
+                        "type": "git",
+                        "tag-pattern": "^v([\\d.]+)"
+                    }
                 },
                 {
                     "type": "file",
