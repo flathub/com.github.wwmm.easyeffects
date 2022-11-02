@@ -1,97 +1,98 @@
 {
-  "id": "com.github.wwmm.easyeffects",
-  "runtime": "org.gnome.Platform",
-  "runtime-version": "42",
-  "sdk": "org.gnome.Sdk",
-  "command": "easyeffects-wrapper",
-  "finish-args": [
-      "--share=ipc",
-      "--socket=fallback-x11",
-      "--socket=wayland",
-      "--device=dri",
-      "--filesystem=xdg-run/pipewire-0:ro",
-      "--env=LV2_PATH=/app/lib/lv2:/app/extensions/Plugins/lv2"
-  ],
-  "cleanup": [
-      "*.a",
-      "*.h",
-      "*.la",
-      "/bin/analyseplugin",
-      "/bin/applyplugin",
-      "/bin/listplugins",
-      "/include",
-      "/lib/pkgconfig",
-      "/lib/python*",
-      "/share/info"
-  ],
-  "add-extensions": {
-      "org.freedesktop.LinuxAudio.Plugins": {
-          "directory": "extensions/Plugins",
-          "version": "21.08",
-          "add-ld-path": "lib",
-          "merge-dirs": "lv2",
-          "subdirectories": true,
-          "no-autodownload": true
-      },
-      "org.freedesktop.LinuxAudio.Plugins.LSP": {
-          "directory": "extensions/Plugins/LSP",
-          "version": "21.08",
-          "add-ld-path": "lib",
-          "merge-dirs": "lv2",
-          "autodelete": false,
-          "subdirectories": true
-      },
-      "org.freedesktop.LinuxAudio.Plugins.ZamPlugins": {
-          "directory": "extensions/Plugins/ZamPlugins",
-          "version": "21.08",
-          "add-ld-path": "lib",
-          "merge-dirs": "lv2",
-          "autodelete": false,
-          "subdirectories": true
-      },
-      "org.freedesktop.LinuxAudio.Plugins.MDA": {
-          "directory": "extensions/Plugins/MDA",
-          "version": "21.08",
-          "add-ld-path": "lib",
-          "merge-dirs": "lv2",
-          "autodelete": false,
-          "subdirectories": true
-      }
-  },
-  "modules": [
-      {
-          "name": "easyeffects",
-          "buildsystem": "meson",
-          "config-opts": [
-              "-Denable-libportal=true"
-          ],
-          "sources": [
-              {
-                  "type": "git",
-                  "path": "easyeffects"
-              },
-              {
-                  "type": "file",
-                  "path": "easyeffects/util/flatpak/easyeffects-wrapper.sh"
-              },
-              {
-                  "type": "patch",
-                  "path": "easyeffects/util/flatpak/patch/easyeffects/002-fix-desktop-file.patch"
-              },
-              {
-                  "type": "shell",
-                  "commands": [
-                      "install -Dvm 755 easyeffects-wrapper.sh $FLATPAK_DEST/bin/easyeffects-wrapper"
-                  ]
-              }
-          ],
-          "post-install": [
-              "install -Dm644 -t $FLATPAK_DEST/share/licenses/$FLATPAK_ID ../LICENSE",
-              "mkdir -pm755 $FLATPAK_DEST/extensions/Plugins"
-          ],
-          "modules": [
-              "easyeffects/util/flatpak/easyeffects-modules.json"
-          ]
-      }
-  ]
+    "id": "com.github.wwmm.easyeffects",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "43",
+    "sdk": "org.gnome.Sdk",
+    "command": "easyeffects-wrapper",
+    "finish-args": [
+        "--share=ipc",
+        "--socket=fallback-x11",
+        "--socket=wayland",
+        "--device=dri",
+        "--filesystem=xdg-run/pipewire-0:ro",
+        "--env=LV2_PATH=/app/lib/lv2:/app/extensions/Plugins/lv2"
+    ],
+    "cleanup": [
+        "*.a",
+        "*.h",
+        "*.la",
+        "/bin/analyseplugin",
+        "/bin/applyplugin",
+        "/bin/listplugins",
+        "/include",
+        "/lib/pkgconfig",
+        "/lib/python*",
+        "/share/info"
+    ],
+    "add-extensions": {
+        "org.freedesktop.LinuxAudio.Plugins": {
+            "directory": "extensions/Plugins",
+            "version": "22.08",
+            "add-ld-path": "lib",
+            "merge-dirs": "lv2",
+            "subdirectories": true,
+            "no-autodownload": true
+        },
+        "org.freedesktop.LinuxAudio.Plugins.LSP": {
+            "directory": "extensions/Plugins/LSP",
+            "version": "22.08",
+            "add-ld-path": "lib",
+            "merge-dirs": "lv2",
+            "autodelete": false,
+            "subdirectories": true
+        },
+        "org.freedesktop.LinuxAudio.Plugins.ZamPlugins": {
+            "directory": "extensions/Plugins/ZamPlugins",
+            "version": "22.08",
+            "add-ld-path": "lib",
+            "merge-dirs": "lv2",
+            "autodelete": false,
+            "subdirectories": true
+        },
+        "org.freedesktop.LinuxAudio.Plugins.MDA": {
+            "directory": "extensions/Plugins/MDA",
+            "version": "22.08",
+            "add-ld-path": "lib",
+            "merge-dirs": "lv2",
+            "autodelete": false,
+            "subdirectories": true
+        }
+    },
+    "modules": [
+        {
+            "name": "easyeffects",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Denable-libportal=true"
+            ],
+            "sources": [
+                {
+                    "//": "Should be type: git for downstream sources, e.g. when using flatpak-builder with easyeffects as a submodule. This ensures the commit can be found for the build debug info. Type dir works everywhere else I have tested.",
+                    "type": "git",
+                    "path": "easyeffects"
+                },
+                {
+                    "type": "file",
+                    "path": "easyeffects/util/flatpak/easyeffects-wrapper.sh"
+                },
+                {
+                    "type": "patch",
+                    "path": "easyeffects/util/flatpak/patch/easyeffects/002-fix-desktop-file.patch"
+                },
+                {
+                    "type": "shell",
+                    "commands": [
+                        "install -Dvm 755 easyeffects-wrapper.sh $FLATPAK_DEST/bin/easyeffects-wrapper"
+                    ]
+                }
+            ],
+            "post-install": [
+                "install -Dm644 -t $FLATPAK_DEST/share/licenses/$FLATPAK_ID ../LICENSE",
+                "mkdir -pm755 $FLATPAK_DEST/extensions/Plugins"
+            ],
+            "modules": [
+                "easyeffects/util/flatpak/easyeffects-modules.json"
+            ]
+        }
+    ]
 }
