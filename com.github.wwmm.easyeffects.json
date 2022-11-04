@@ -67,15 +67,9 @@
             ],
             "sources": [
                 {
-                    "//" : "cant use a local git dir for the files because of flatpak-builder-lint errors. Instead have the repo here, and make sure easyeffects submodule is kept up to date.",
-                    "type": "git",
-                    "url": "https://github.com/wwmm/easyeffects",
-                    "commit": "9b2e89508c9a7df1e112f1de12940a086eb483b7",
-                    "tag": "v7.0.0",
-                    "x-checker-data": {
-                        "type": "git",
-                        "tag-pattern": "^v([\\d.]+)"
-                    }
+                    "//" : "this breaks the git commit of the build shown in the about window, but that is probably a flatpak-builder bug.",
+                    "type": "dir",
+                    "path": "easyeffects"
                 },
                 {
                     "type": "file",
