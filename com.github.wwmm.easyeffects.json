@@ -1,7 +1,7 @@
 {
     "id": "com.github.wwmm.easyeffects",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "43",
+    "runtime-version": "42",
     "sdk": "org.gnome.Sdk",
     "command": "easyeffects-wrapper",
     "finish-args": [
@@ -27,7 +27,7 @@
     "add-extensions": {
         "org.freedesktop.LinuxAudio.Plugins": {
             "directory": "extensions/Plugins",
-            "version": "22.08",
+            "version": "21.08",
             "add-ld-path": "lib",
             "merge-dirs": "lv2",
             "subdirectories": true,
@@ -35,7 +35,7 @@
         },
         "org.freedesktop.LinuxAudio.Plugins.LSP": {
             "directory": "extensions/Plugins/LSP",
-            "version": "22.08",
+            "version": "21.08",
             "add-ld-path": "lib",
             "merge-dirs": "lv2",
             "autodelete": false,
@@ -43,7 +43,7 @@
         },
         "org.freedesktop.LinuxAudio.Plugins.ZamPlugins": {
             "directory": "extensions/Plugins/ZamPlugins",
-            "version": "22.08",
+            "version": "21.08",
             "add-ld-path": "lib",
             "merge-dirs": "lv2",
             "autodelete": false,
@@ -51,7 +51,7 @@
         },
         "org.freedesktop.LinuxAudio.Plugins.MDA": {
             "directory": "extensions/Plugins/MDA",
-            "version": "22.08",
+            "version": "21.08",
             "add-ld-path": "lib",
             "merge-dirs": "lv2",
             "autodelete": false,
@@ -70,12 +70,7 @@
                     "//" : "cant use a local git dir for the files because of flatpak-builder-lint errors. Instead have the repo here, and make sure easyeffects submodule is kept up to date.",
                     "type": "git",
                     "url": "https://github.com/wwmm/easyeffects",
-                    "commit": "9b2e89508c9a7df1e112f1de12940a086eb483b7",
-                    "tag": "v7.0.0",
-                    "x-checker-data": {
-                        "type": "git",
-                        "tag-pattern": "^v([\\d.]+)"
-                    }
+                    "commit": "b2445950fc25a96093f60b3e1af4b28d251e48b1"
                 },
                 {
                     "type": "file",
