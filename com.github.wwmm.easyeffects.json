@@ -1,7 +1,7 @@
 {
     "id": "com.github.wwmm.easyeffects",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "42",
+    "runtime-version": "43",
     "sdk": "org.gnome.Sdk",
     "command": "easyeffects-wrapper",
     "finish-args": [
@@ -10,7 +10,8 @@
         "--socket=wayland",
         "--device=dri",
         "--filesystem=xdg-run/pipewire-0:ro",
-        "--env=LV2_PATH=/app/lib/lv2:/app/extensions/Plugins/lv2"
+        "--env=LV2_PATH=/app/lib/lv2:/app/extensions/Plugins/lv2",
+        "--env=LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/lib/pipewire-0.3/jack"
     ],
     "cleanup": [
         "*.a",
@@ -27,7 +28,7 @@
     "add-extensions": {
         "org.freedesktop.LinuxAudio.Plugins": {
             "directory": "extensions/Plugins",
-            "version": "21.08",
+            "version": "22.08",
             "add-ld-path": "lib",
             "merge-dirs": "lv2",
             "subdirectories": true,
@@ -35,7 +36,7 @@
         },
         "org.freedesktop.LinuxAudio.Plugins.LSP": {
             "directory": "extensions/Plugins/LSP",
-            "version": "21.08",
+            "version": "22.08",
             "add-ld-path": "lib",
             "merge-dirs": "lv2",
             "autodelete": false,
@@ -43,7 +44,7 @@
         },
         "org.freedesktop.LinuxAudio.Plugins.ZamPlugins": {
             "directory": "extensions/Plugins/ZamPlugins",
-            "version": "21.08",
+            "version": "22.08",
             "add-ld-path": "lib",
             "merge-dirs": "lv2",
             "autodelete": false,
@@ -51,7 +52,7 @@
         },
         "org.freedesktop.LinuxAudio.Plugins.MDA": {
             "directory": "extensions/Plugins/MDA",
-            "version": "21.08",
+            "version": "22.08",
             "add-ld-path": "lib",
             "merge-dirs": "lv2",
             "autodelete": false,
@@ -70,7 +71,7 @@
                     "//" : "cant use a local git dir for the files because of flatpak-builder-lint errors. Instead have the repo here, and make sure easyeffects submodule is kept up to date.",
                     "type": "git",
                     "url": "https://github.com/wwmm/easyeffects",
-                    "commit": "b2445950fc25a96093f60b3e1af4b28d251e48b1"
+                    "commit": "8bd22974983138b76329130a4ae9808e805af4b6"
                 },
                 {
                     "type": "file",
