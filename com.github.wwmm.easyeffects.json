@@ -34,6 +34,14 @@
             "subdirectories": true,
             "no-autodownload": true
         },
+        "org.freedesktop.LinuxAudio.Plugins.Calf": {
+            "directory": "extensions/Plugins/Calf",
+            "version": "22.08",
+            "add-ld-path": "lib",
+            "merge-dirs": "lv2",
+            "autodelete": false,
+            "subdirectories": true
+        },
         "org.freedesktop.LinuxAudio.Plugins.LSP": {
             "directory": "extensions/Plugins/LSP",
             "version": "22.08",
@@ -68,18 +76,18 @@
             ],
             "sources": [
                 {
-                    "//" : "cant use a local git dir for the files because of flatpak-builder-lint errors. Instead have the repo here, and make sure easyeffects submodule is kept up to date.",
                     "type": "git",
                     "url": "https://github.com/wwmm/easyeffects",
-                    "commit": "8bd22974983138b76329130a4ae9808e805af4b6"
+                    "tag": "v7.0.0",
+                    "commit": "9b2e89508c9a7df1e112f1de12940a086eb483b7"
                 },
                 {
                     "type": "file",
-                    "path": "easyeffects/util/flatpak/easyeffects-wrapper.sh"
+                    "path": "easyeffects-wrapper.sh"
                 },
                 {
                     "type": "patch",
-                    "path": "easyeffects/util/flatpak/patch/easyeffects/002-fix-desktop-file.patch"
+                    "path": "patch/easyeffects/002-fix-desktop-file.patch"
                 },
                 {
                     "type": "shell",
@@ -93,7 +101,7 @@
                 "mkdir -pm755 $FLATPAK_DEST/extensions/Plugins"
             ],
             "modules": [
-                "easyeffects/util/flatpak/easyeffects-modules.json"
+                "easyeffects-modules.json"
             ]
         }
     ]
