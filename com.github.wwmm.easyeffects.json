@@ -78,8 +78,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/wwmm/easyeffects",
-                    "tag": "v7.0.0",
-                    "commit": "9b2e89508c9a7df1e112f1de12940a086eb483b7"
+                    "tag": "v7.0.1",
+                    "commit": "857d33f73f36340d4f01da9a25e6a8efa119d051"
                 },
                 {
                     "type": "file",
