@@ -3,7 +3,7 @@
     "runtime": "org.gnome.Platform",
     "runtime-version": "44",
     "sdk": "org.gnome.Sdk",
-    "command": "easyeffects-wrapper",
+    "command": "easyeffects",
     "finish-args": [
         "--share=ipc",
         "--socket=fallback-x11",
@@ -79,20 +79,6 @@
                     "url": "https://github.com/wwmm/easyeffects",
                     "tag": "v7.0.4",
                     "commit": "b0c57b8b0a54aac7a5eb1f08ab4cf51fa419a16d"
-                },
-                {
-                    "type": "file",
-                    "path": "easyeffects-wrapper.sh"
-                },
-                {
-                    "type": "patch",
-                    "path": "patch/easyeffects/002-fix-desktop-file.patch"
-                },
-                {
-                    "type": "shell",
-                    "commands": [
-                        "install -Dvm 755 easyeffects-wrapper.sh $FLATPAK_DEST/bin/easyeffects-wrapper"
-                    ]
                 }
             ],
             "post-install": [
