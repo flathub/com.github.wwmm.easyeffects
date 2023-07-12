@@ -117,28 +117,6 @@
                             }
                         }
                     ]
-                },
-                {
-                    "name": "rubberband",
-                    "buildsystem": "meson",
-                    "cleanup": [
-                        "/include",
-                        "/lib/*.a",
-                        "/lib/pkgconfig"
-                    ],
-                    "sources": [
-                        {
-                            "type": "archive",
-                            "url": "https://breakfastquay.com/files/releases/rubberband-3.2.1.tar.bz2",
-                            "sha256": "82edacd0c50bfe56a6a85db1fcd4ca3346940ffe02843fc50f8b92f99a97d172",
-                            "x-checker-data": {
-                                "type": "html",
-                                "url": "https://www.breakfastquay.com/rubberband/",
-                                "version-pattern": "Rubber Band Library v(\\d\\.\\d+\\.?\\d*) source",
-                                "url-template": "https://breakfastquay.com/files/releases/rubberband-$version.tar.bz2"
-                            }
-                        }
-                    ]
                 }
             ]
         },
@@ -160,6 +138,27 @@
             ],
             "cleanup": [
                 "/share/doc/rnnoise"
+            ]
+        },
+        {
+            "name": "soundtouch",
+            "buildsystem": "cmake-ninja",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://codeberg.org/soundtouch/soundtouch.git",
+                    "tag": "2.3.2",
+                    "commit": "29fba832a7920a04eab956b3990c50e13d8c93f9",
+                    "x-checker-data": {
+                        "type": "git",
+                        "tag-pattern": "^([\\d.]+)$"
+                    }
+                }
+            ],
+            "cleanup": [
+                "/bin",
+                "/lib/cmake",
+                "/share/doc"
             ]
         },
         {
@@ -258,8 +257,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/fmtlib/fmt",
-                    "tag": "9.1.0",
-                    "commit": "a33701196adfad74917046096bf5a2aa0ab0bb50",
+                    "tag": "10.0.0",
+                    "commit": "a0b8a92e3d1532361c2f7feb63babc5c18d00ef2",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://api.github.com/repos/fmtlib/fmt/releases/latest",
