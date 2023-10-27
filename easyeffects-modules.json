@@ -10,8 +10,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/libsigc++/3.4/libsigc++-3.4.0.tar.xz",
-                    "sha256": "02e2630ffb5ce93cd52c38423521dfe7063328863a6e96d41d765a6116b8707e",
+                    "url": "https://download.gnome.org/sources/libsigc++/3.6/libsigc++-3.6.0.tar.xz",
+                    "sha256": "c3d23b37dfd6e39f2e09f091b77b1541fbfa17c4f0b6bf5c89baef7229080e17",
                     "x-checker-data": {
                         "type": "gnome",
                         "name": "libsigc++",
@@ -73,6 +73,7 @@
                 "shared-modules/linux-audio/fftw3f.json",
                 "shared-modules/linux-audio/lv2.json",
                 "shared-modules/linux-audio/lilv.json",
+                "shared-modules/linux-audio/ladspa.json",
                 {
                     "name": "bs2b",
                     "rm-configure": true,
@@ -219,8 +220,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/flatpak/libportal.git",
-                    "tag": "0.7",
-                    "commit": "fcfd10af0d60b0e5e81aff1db523145a3e2e87aa",
+                    "tag": "0.7.1",
+                    "commit": "e9ed3a50cdde321eaf42361212480a66eb94a57a",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://api.github.com/repos/flatpak/libportal/releases/latest",
@@ -297,8 +298,8 @@
                     "only-arches": [
                         "x86_64"
                     ],
-                    "url": "https://github.com/rui314/mold/releases/download/v2.1.0/mold-2.1.0-x86_64-linux.tar.gz",
-                    "sha256": "67a479bf2eddf10dd223e488ceedddca49174f629f7a4bbaeaab80c5b5702021",
+                    "url": "https://github.com/rui314/mold/releases/download/v2.3.1/mold-2.3.1-x86_64-linux.tar.gz",
+                    "sha256": "17e7ed0fd4877fbf24d13a830bd325ce3ebd05434800af9296b6c576fcc0414e",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 241732,
@@ -312,8 +313,8 @@
                     "only-arches": [
                         "aarch64"
                     ],
-                    "url": "https://github.com/rui314/mold/releases/download/v2.1.0/mold-2.1.0-aarch64-linux.tar.gz",
-                    "sha256": "3f7d3f7eede50687399b567e5bddfaadd902ea8599185dd159882b3d25184e21",
+                    "url": "https://github.com/rui314/mold/releases/download/v2.3.1/mold-2.3.1-aarch64-linux.tar.gz",
+                    "sha256": "dd4a967aadc9f03f7777f7dac74349c8ff453c46967484e041044beb11d4dde9",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 241732,
@@ -329,6 +330,45 @@
             ],
             "cleanup": [
                 "*"
+            ]
+        },
+        {
+            "name": "libdeep_filter_ladspa",
+            "sources": [
+                {
+                    "type": "file",
+                    "dest-filename": "libdeep_filter_ladspa.so",
+                    "only-arches": [
+                        "x86_64"
+                    ],
+                    "url": "https://github.com/Rikorose/DeepFilterNet/releases/download/v0.5.6/libdeep_filter_ladspa-0.5.6-x86_64-unknown-linux-gnu.so",
+                    "sha256": "2ca3205c2911d389604a826a240e745597d50252b5cab81c8248252b335e2236",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://api.github.com/repos/Rikorose/DeepFilterNet/releases/latest",
+                        "version-query": ".tag_name | sub(\"^v\"; \"\")",
+                        "url-query": ".assets[] | select(.name==\"libdeep_filter_ladspa-\" + $version + \"-x86_64-unknown-linux-gnu.so\") | .browser_download_url"
+                    }
+                },
+                {
+                    "type": "file",
+                    "dest-filename": "libdeep_filter_ladspa.so",
+                    "only-arches": [
+                        "aarch64"
+                    ],
+                    "url": "https://github.com/Rikorose/DeepFilterNet/releases/download/v0.5.6/libdeep_filter_ladspa-0.5.6-aarch64-unknown-linux-gnu.so",
+                    "sha256": "7b1fe31e41a4b447e2c7a6fd46397b7cd4456d6acb5a011d4ea125cb9612041e",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://api.github.com/repos/Rikorose/DeepFilterNet/releases/latest",
+                        "version-query": ".tag_name | sub(\"^v\"; \"\")",
+                        "url-query": ".assets[] | select(.name==\"libdeep_filter_ladspa-\" + $version + \"-aarch64-unknown-linux-gnu.so\") | .browser_download_url"
+                    }
+                }
+            ],
+            "buildsystem": "simple",
+            "build-commands": [
+                "install -m 644 libdeep_filter_ladspa.so $FLATPAK_DEST/lib/ladspa/"
             ]
         }
     ]
