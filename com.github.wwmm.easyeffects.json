@@ -10,7 +10,8 @@
         "--socket=wayland",
         "--device=dri",
         "--filesystem=xdg-run/pipewire-0:ro",
-        "--env=LV2_PATH=/app/lib/lv2:/app/extensions/Plugins/lv2"
+        "--env=LV2_PATH=/app/lib/lv2:/app/extensions/Plugins/lv2",
+        "--env=LADSPA_PATH=/app/lib/ladspa"
     ],
     "cleanup": [
         "*.a",
@@ -77,8 +78,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/wwmm/easyeffects",
-                    "tag": "v7.1.0",
-                    "commit": "ef405d19dfc6c40aea17ac44906e26fde8892262"
+                    "//": "no tag since flatpak depends on fixes merged after 7.1.1 tag",
+                    "commit": "3d12b7c25903fce4581230d8063890a936d9c6fd"
                 }
             ],
             "post-install": [
