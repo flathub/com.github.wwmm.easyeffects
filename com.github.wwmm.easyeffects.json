@@ -1,7 +1,7 @@
 {
     "id": "com.github.wwmm.easyeffects",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "44",
+    "runtime-version": "45",
     "sdk": "org.gnome.Sdk",
     "command": "easyeffects",
     "finish-args": [
@@ -28,7 +28,7 @@
     "add-extensions": {
         "org.freedesktop.LinuxAudio.Plugins": {
             "directory": "extensions/Plugins",
-            "version": "22.08",
+            "version": "23.08",
             "add-ld-path": "lib",
             "merge-dirs": "lv2",
             "subdirectories": true,
@@ -36,7 +36,7 @@
         },
         "org.freedesktop.LinuxAudio.Plugins.Calf": {
             "directory": "extensions/Plugins/Calf",
-            "version": "22.08",
+            "version": "23.08",
             "add-ld-path": "lib",
             "merge-dirs": "lv2",
             "autodelete": false,
@@ -44,7 +44,7 @@
         },
         "org.freedesktop.LinuxAudio.Plugins.LSP": {
             "directory": "extensions/Plugins/LSP",
-            "version": "22.08",
+            "version": "23.08",
             "add-ld-path": "lib",
             "merge-dirs": "lv2",
             "autodelete": false,
@@ -52,7 +52,7 @@
         },
         "org.freedesktop.LinuxAudio.Plugins.ZamPlugins": {
             "directory": "extensions/Plugins/ZamPlugins",
-            "version": "22.08",
+            "version": "23.08",
             "add-ld-path": "lib",
             "merge-dirs": "lv2",
             "autodelete": false,
@@ -60,7 +60,7 @@
         },
         "org.freedesktop.LinuxAudio.Plugins.MDA": {
             "directory": "extensions/Plugins/MDA",
-            "version": "22.08",
+            "version": "23.08",
             "add-ld-path": "lib",
             "merge-dirs": "lv2",
             "autodelete": false,
@@ -79,7 +79,7 @@
                     "type": "git",
                     "url": "https://github.com/wwmm/easyeffects",
                     "//": "no tag since flatpak depends on fixes merged after 7.1.1 tag",
-                    "commit": "3d12b7c25903fce4581230d8063890a936d9c6fd"
+                    "commit": "f4d41323224135261abe0f91088184d9ef4b8e46"
                 }
             ],
             "post-install": [
