@@ -197,8 +197,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/nlohmann/json",
-                    "tag": "v3.11.2",
-                    "commit": "bc889afb4c5bf1c0d8ee29ef35eaaf4c8bef8a5d",
+                    "tag": "v3.11.3",
+                    "commit": "9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://api.github.com/repos/nlohmann/json/releases/latest",
@@ -219,8 +219,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2021.10.0.tar.gz",
-                    "sha256": "487023a955e5a3cc6d3a0d5f89179f9b6c0ae7222613a7185b0227ba0c83700b",
+                    "url": "https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2021.11.0.tar.gz",
+                    "sha256": "782ce0cab62df9ea125cdea253a50534862b563f1d85d4cda7ad4e77550ac363",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 227581,
@@ -266,8 +266,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/fmtlib/fmt",
-                    "tag": "10.1.1",
-                    "commit": "f5e54359df4c26b6230fc61d38aa294581393084",
+                    "tag": "10.2.1",
+                    "commit": "e69e5f977d458f2650bb346dadf2ad30c5320281",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://api.github.com/repos/fmtlib/fmt/releases/latest",
@@ -303,8 +303,8 @@
                     "only-arches": [
                         "x86_64"
                     ],
-                    "url": "https://github.com/rui314/mold/releases/download/v2.3.2/mold-2.3.2-x86_64-linux.tar.gz",
-                    "sha256": "2f0d694f81fa39f5e4947bd62cd39d34fe74a4dda330e80838f65e1798043c1d",
+                    "url": "https://github.com/rui314/mold/releases/download/v2.4.0/mold-2.4.0-x86_64-linux.tar.gz",
+                    "sha256": "666354f7dbd00982591257cf3729cb7f7967387b7576ac5f0e33262dc6c985ce",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 241732,
@@ -318,8 +318,8 @@
                     "only-arches": [
                         "aarch64"
                     ],
-                    "url": "https://github.com/rui314/mold/releases/download/v2.3.2/mold-2.3.2-aarch64-linux.tar.gz",
-                    "sha256": "851d67b22cae36db718112734308a244e98bf3ea9f94aeca36bbd641f3c3d806",
+                    "url": "https://github.com/rui314/mold/releases/download/v2.4.0/mold-2.4.0-aarch64-linux.tar.gz",
+                    "sha256": "08959d33d0149519fdeb9104b61dc17aa6200f1c6889c343e6b83ffb4833204b",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 241732,
