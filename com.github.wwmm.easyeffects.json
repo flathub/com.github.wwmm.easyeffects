@@ -29,7 +29,7 @@
     "add-extensions": {
         "io.github.wwmm.easyeffects.Presets": {
             "directory": "extensions/Presets",
-            "merge-dirs": "input;output",
+            "merge-dirs": "input;output;irs;rnnoise",
             "subdirectories": true,
             "no-autodownload": true,
             "autodelete": true
