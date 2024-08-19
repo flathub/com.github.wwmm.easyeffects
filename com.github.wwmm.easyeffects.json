@@ -3,7 +3,6 @@
     "runtime": "org.gnome.Platform",
     "runtime-version": "46",
     "sdk": "org.gnome.Sdk",
-    "branch": "stable",
     "command": "easyeffects",
     "finish-args": [
         "--share=ipc",
@@ -86,8 +85,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/wwmm/easyeffects",
-                    "commit": "48653ce5bcb8476870e0c8a4228833478d83caaa",
-                    "tag": "v7.1.7"
+                    "commit": "aa6c3196bddc78980351bd3c9a3cdb1d2efafd24",
+                    "tag": "v7.1.8"
                 }
             ],
             "post-install": [
