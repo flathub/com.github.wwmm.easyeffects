@@ -219,8 +219,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2021.13.0.tar.gz",
-                    "sha256": "3ad5dd08954b39d113dc5b3f8a8dc6dc1fd5250032b7c491eb07aed5c94133e1",
+                    "url": "https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2022.0.0.tar.gz",
+                    "sha256": "e8e89c9c345415b17b30a2db3095ba9d47647611662073f7fbf54ad48b7f3c2a",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 227581,
@@ -303,8 +303,8 @@
                     "only-arches": [
                         "x86_64"
                     ],
-                    "url": "https://github.com/rui314/mold/releases/download/v2.33.0/mold-2.33.0-x86_64-linux.tar.gz",
-                    "sha256": "e169f7aaec6fbbad5e02ce8d705f59ed9372179ea180afb3fc967c3941ab2c16",
+                    "url": "https://github.com/rui314/mold/releases/download/v2.34.1/mold-2.34.1-x86_64-linux.tar.gz",
+                    "sha256": "dafd02fe19c51818aa22c9d569393616b1a85a2220d6fb32ba3728d351074e59",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 241732,
@@ -318,8 +318,8 @@
                     "only-arches": [
                         "aarch64"
                     ],
-                    "url": "https://github.com/rui314/mold/releases/download/v2.33.0/mold-2.33.0-aarch64-linux.tar.gz",
-                    "sha256": "20ba9736a3dc0e0c9d5df177f375ad9c9d2a88864727e80a3e21d71abc7874e4",
+                    "url": "https://github.com/rui314/mold/releases/download/v2.34.1/mold-2.34.1-aarch64-linux.tar.gz",
+                    "sha256": "ea5f1266b92aa17c262210766dfd7cfd6637a6a94ac4c75e5def50d534ca24c1",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 241732,
