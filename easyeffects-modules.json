@@ -169,8 +169,8 @@
                 {
                     "type": "git",
                     "url": "https://codeberg.org/soundtouch/soundtouch.git",
-                    "tag": "2.3.3",
-                    "commit": "e83424d5928ab8513d2d082779c275765dee31b9",
+                    "tag": "2.4.0",
+                    "commit": "d994965fbbcf0f6ceeed0e72516968130c2912f0",
                     "x-checker-data": {
                         "type": "git",
                         "tag-pattern": "^([\\d.]+)$",
@@ -197,8 +197,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/nlohmann/json",
-                    "tag": "v3.11.3",
-                    "commit": "9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03",
+                    "tag": "v3.12.0",
+                    "commit": "55f93686c01528224f448c19128836e7df245f72",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://api.github.com/repos/nlohmann/json/releases/latest",
@@ -219,8 +219,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2022.0.0.tar.gz",
-                    "sha256": "e8e89c9c345415b17b30a2db3095ba9d47647611662073f7fbf54ad48b7f3c2a",
+                    "url": "https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2022.2.0.tar.gz",
+                    "sha256": "f0f78001c8c8edb4bddc3d4c5ee7428d56ae313254158ad1eec49eced57f6a5b",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 227581,
@@ -266,8 +266,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/fmtlib/fmt",
-                    "tag": "11.1.4",
-                    "commit": "123913715afeb8a437e6388b4473fcc4753e1c9a",
+                    "tag": "11.2.0",
+                    "commit": "40626af88bd7df9a5fb80be7b25ac85b122d6c21",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://api.github.com/repos/fmtlib/fmt/releases/latest",
@@ -303,8 +303,8 @@
                     "only-arches": [
                         "x86_64"
                     ],
-                    "url": "https://github.com/rui314/mold/releases/download/v2.37.1/mold-2.37.1-x86_64-linux.tar.gz",
-                    "sha256": "cfdb6e82b5c906840e66304216b1b6e15766e4a7eac03893bbf2b41010f0a927",
+                    "url": "https://github.com/rui314/mold/releases/download/v2.40.1/mold-2.40.1-x86_64-linux.tar.gz",
+                    "sha256": "d8892f673602f6437c08fabf7643a98cae8db64544ea5b3071b3be8f6c31c67a",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 241732,
@@ -318,8 +318,8 @@
                     "only-arches": [
                         "aarch64"
                     ],
-                    "url": "https://github.com/rui314/mold/releases/download/v2.37.1/mold-2.37.1-aarch64-linux.tar.gz",
-                    "sha256": "0c161124747d6ea0dba6f1b8b96d382fd51cad5345252606c9b32cb675d29a1c",
+                    "url": "https://github.com/rui314/mold/releases/download/v2.40.1/mold-2.40.1-aarch64-linux.tar.gz",
+                    "sha256": "4ac50a967783ab03b835118de1d7001b3be4f1d21c1a40a55f844e0ce489cf79",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 241732,
