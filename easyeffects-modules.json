@@ -2,24 +2,19 @@
     "name": "easyeffects-modules",
     "modules": [
         {
-            "name": "pipewire",
-            "buildsystem": "meson",
-            "config-opts": [
-                "-Dgstreamer=disabled",
-                "-Dman=disabled",
-                "-Dsystemd=disabled",
-                "-Dudev=disabled",
-                "-Dudevrulesdir=disabled",
-                "-Dsession-managers=[]",
-                "-Djack=enabled"
-            ],
+            "name": "qt6-graphs",
+            "buildsystem": "cmake-ninja",
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/pipewire/pipewire.git",
-                    "tag": "0.3.69",
-                    "commit": "cd8be0ba3b27542253f7744b699c2ede159e2d7c"
+                    "url": "https://github.com/qt/qtgraphs.git",
+                    "tag": "v6.10.0",
+                    "commit": "4e18609678b777f7e7ce47c17764e46c20bfb608",
+                    "//": "We cannot use x-checker-data here as this version has to match the qt/kde runtime"
                 }
+            ],
+            "post-install": [
+                "install $FLATPAK_DEST/lib/*-linux-gnu/*.so $FLATPAK_DEST/lib/*-linux-gnu/*.so.* $FLATPAK_DEST/lib"
             ]
         },
         {
@@ -50,7 +45,8 @@
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=Release",
                 "-DBUILD_STATIC_LIBS=OFF",
-                "-DCMAKE_INSTALL_LIBDIR=lib"
+                "-DCMAKE_INSTALL_LIBDIR=lib",
+                "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
             ],
             "sources": [
                 {
@@ -66,9 +62,6 @@
                         "timestamp-query": ".published_at"
                     }
                 }
-            ],
-            "post-install": [
-                "install -Dm644 -t $FLATPAK_DEST/share/licenses/libebur128 COPYING"
             ]
         },
         {
@@ -117,9 +110,6 @@
                             "path": "patch/bs2b/001-fix-automake-dist-lzma.patch"
                         }
                     ],
-                    "post-install": [
-                        "install -Dm644 -t $FLATPAK_DEST/share/licenses/bs2b COPYING"
-                    ],
                     "cleanup": [
                         "/bin"
                     ]
@@ -130,7 +120,7 @@
                     "sources": [
                         {
                             "type": "git",
-                            "url": "https://gitlab.xiph.org/xiph/speexdsp",
+                            "url": "https://github.com/xiph/speexdsp",
                             "tag": "SpeexDSP-1.2.1",
                             "commit": "1b28a0f61bc31162979e1f26f3981fc3637095c8",
                             "x-checker-data": {
@@ -219,8 +209,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2022.2.0.tar.gz",
-                    "sha256": "f0f78001c8c8edb4bddc3d4c5ee7428d56ae313254158ad1eec49eced57f6a5b",
+                    "url": "https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2022.3.0.tar.gz",
+                    "sha256": "01598a46c1162c27253a0de0236f520fd8ee8166e9ebb84a4243574f88e6e50a",
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 227581,
@@ -235,46 +225,15 @@
             "buildsystem": "meson",
             "config-opts": [
                 "-Ddocs=false",
-                "-Dbackend-gtk4=enabled"
+                "-Dbackend-qt6=enabled",
+                "-Dvapi=false"
             ],
             "sources": [
                 {
                     "type": "git",
                     "url": "https://github.com/flatpak/libportal.git",
-                    "tag": "0.9.1",
-                    "commit": "8f5dc8d192f6e31dafe69e35219e3b707bde71ce",
-                    "x-checker-data": {
-                        "type": "json",
-                        "url": "https://api.github.com/repos/flatpak/libportal/releases/latest",
-                        "tag-query": ".tag_name",
-                        "version-query": "$tag | sub(\"^jq-\"; \"\")",
-                        "timestamp-query": ".published_at"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "fmt",
-            "buildsystem": "cmake-ninja",
-            "config-opts": [
-                "-DCMAKE_INSTALL_PREFIX=/app",
-                "-DCMAKE_INSTALL_LIBDIR=/app/lib",
-                "-DBUILD_SHARED_LIBS=ON",
-                "-DFMT_TEST=Off"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://github.com/fmtlib/fmt",
-                    "tag": "11.2.0",
-                    "commit": "40626af88bd7df9a5fb80be7b25ac85b122d6c21",
-                    "x-checker-data": {
-                        "type": "json",
-                        "url": "https://api.github.com/repos/fmtlib/fmt/releases/latest",
-                        "tag-query": ".tag_name",
-                        "version-query": "$tag | sub(\"^jq-\"; \"\")",
-                        "timestamp-query": ".published_at"
-                    }
+                    "//": "use commit from master as we need these unreleased changes to build on qt 6.9",
+                    "commit": "796053d2eebe4532aad6bd3fd80cdf3b197806ec"
                 }
             ]
         },
@@ -292,49 +251,6 @@
                         "url-template": "https://ftp.gnu.org/gnu/gsl/gsl-$version.tar.gz"
                     }
                 }
-            ]
-        },
-        {
-            "name": "mold",
-            "sources": [
-                {
-                    "type": "archive",
-                    "dest-filename": "mold-linux.tar.gz",
-                    "only-arches": [
-                        "x86_64"
-                    ],
-                    "url": "https://github.com/rui314/mold/releases/download/v2.40.2/mold-2.40.2-x86_64-linux.tar.gz",
-                    "sha256": "9f2c16bae380813f4aed34d2ab0534f5e1b82df154923de33e2edf8e5648f9d8",
-                    "x-checker-data": {
-                        "type": "anitya",
-                        "project-id": 241732,
-                        "stable-only": true,
-                        "url-template": "https://github.com/rui314/mold/releases/download/v$version/mold-$version-x86_64-linux.tar.gz"
-                    }
-                },
-                {
-                    "type": "archive",
-                    "dest-filename": "mold-linux.tar.gz",
-                    "only-arches": [
-                        "aarch64"
-                    ],
-                    "url": "https://github.com/rui314/mold/releases/download/v2.40.2/mold-2.40.2-aarch64-linux.tar.gz",
-                    "sha256": "a390f5fafe03d4b73f3ee92cc56e521973cf7a6c1f800912e4ee0b3d8991f783",
-                    "x-checker-data": {
-                        "type": "anitya",
-                        "project-id": 241732,
-                        "stable-only": true,
-                        "url-template": "https://github.com/rui314/mold/releases/download/v$version/mold-$version-aarch64-linux.tar.gz"
-                    }
-                }
-            ],
-            "buildsystem": "simple",
-            "build-commands": [
-                "install -m 755 bin/mold $FLATPAK_DEST/bin/mold",
-                "install -m 755 bin/ld.mold $FLATPAK_DEST/bin/ld.mold"
-            ],
-            "cleanup": [
-                "*"
             ]
         },
         {
@@ -374,6 +290,36 @@
             "buildsystem": "simple",
             "build-commands": [
                 "install -m 644 libdeep_filter_ladspa.so $FLATPAK_DEST/lib/ladspa/"
+            ]
+        },
+        {
+            "name": "kirigami-addons",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.kde.org/stable/kirigami-addons/kirigami-addons-1.10.0.tar.xz",
+                    "sha256": "c98f92bf7c452e12f6dc403404215413db3959fe904ad830ead0db6bb09b3d11",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 242933,
+                        "stable-only": true,
+                        "url-template": "https://download.kde.org/stable/kirigami-addons/kirigami-addons-$version.tar.xz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "webrtc-audio-processing",
+            "buildsystem": "meson",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.freedesktop.org/pulseaudio/webrtc-audio-processing.git",
+                    "commit": "bc838790eeb6066d30f019c2a3516bd2b824a5c8",
+                    "//": "use latest commit for gcc 15 support"
+                }
             ]
         }
     ]
