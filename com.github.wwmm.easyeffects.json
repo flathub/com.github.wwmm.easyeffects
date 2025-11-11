@@ -14,7 +14,8 @@
         "--device=dri",
         "--filesystem=xdg-run/pipewire-0:ro",
         "--env=LV2_PATH=/app/lib/lv2:/app/extensions/Plugins/lv2",
-        "--env=LADSPA_PATH=/app/lib/ladspa"
+        "--env=LADSPA_PATH=/app/lib/ladspa",
+        "--talk-name=org.kde.StatusNotifierWatcher"
     ],
     "cleanup": [
         "*.a",
