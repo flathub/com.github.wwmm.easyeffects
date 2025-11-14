@@ -10,12 +10,12 @@
         "--share=ipc",
         "--socket=fallback-x11",
         "--env=QTWEBENGINEPROCESS_PATH=/app/bin/QtWebEngineProcess",
+        "--talk-name=org.kde.StatusNotifierWatcher",
         "--socket=wayland",
         "--device=dri",
         "--filesystem=xdg-run/pipewire-0:ro",
         "--env=LV2_PATH=/app/lib/lv2:/app/extensions/Plugins/lv2",
-        "--env=LADSPA_PATH=/app/lib/ladspa",
-        "--talk-name=org.kde.StatusNotifierWatcher"
+        "--env=LADSPA_PATH=/app/lib/ladspa"
     ],
     "cleanup": [
         "*.a",
@@ -89,8 +89,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/wwmm/easyeffects",
-                    "commit": "2a3986ca4d62d6f6c863812c98538698e292e166",
-                    "tag": "v8.0.0"
+                    "commit": "a9d432bba2e1264df42a409bf03e1df66ca55c1c",
+                    "tag": "v8.0.1"
                 }
             ],
             "post-install": [
