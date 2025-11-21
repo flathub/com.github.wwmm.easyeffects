@@ -89,8 +89,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/wwmm/easyeffects",
-                    "commit": "dd5e2883b8dbfb37fa770ac8f4b65a0ef7d1ab14",
-                    "tag": "v8.0.3"
+                    "commit": "dc7341b4e5c70bb13c668b4b63be7ae9eaedcbe3",
+                    "tag": "v8.0.4"
                 }
             ],
             "post-install": [
