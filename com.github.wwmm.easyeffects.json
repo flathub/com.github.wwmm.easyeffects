@@ -81,6 +81,14 @@
             "merge-dirs": "lv2",
             "autodelete": false,
             "subdirectories": true
+        },
+        "org.freedesktop.LinuxAudio.Plugins.x42Plugins": {
+            "directory": "extensions/Plugins/x42Plugins",
+            "version": "25.08",
+            "add-ld-path": "lib",
+            "merge-dirs": "lv2",
+            "autodelete": false,
+            "subdirectories": true
         }
     },
     "modules": [
@@ -94,8 +102,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/wwmm/easyeffects",
-                    "commit": "6dbf7e24fbd2fa6eac1d05c0885c83d1e9379778",
-                    "tag": "v8.2.1"
+                    "commit": "7216a208d9d5bcb386f30af6a4e4f7c8f38613fd",
+                    "tag": "v8.2.2"
                 }
             ],
             "post-install": [
